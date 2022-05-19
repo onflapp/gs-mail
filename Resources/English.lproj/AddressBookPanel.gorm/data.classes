@@ -1,0 +1,54 @@
+{
+    "## Comment" = "Do NOT change this file, Gorm maintains it";
+    ABPerson = {
+	Actions = (
+	);
+	Outlets = (
+	);
+	Super = ABRecord;
+    };
+    ABRecord = {
+	Actions = (
+	);
+	Outlets = (
+	);
+	Super = NSObject;
+    };
+    AddressBookController = {
+	Actions = (
+	    "selectionInBrowserHasChanged:",
+	    "ccClicked:",
+	    "doubleClicked:",
+	    "toClicked:",
+	    "openClicked:",
+	    "emailLabelChanged:",
+	    "bccClicked:"
+	);
+	Outlets = (
+	    preferredEmailLabelPopUp,
+	    tableView,
+	    open,
+	    browser
+	);
+	Super = NSWindowController;
+    };
+    FirstResponder = {
+	Actions = (
+	    "bccClicked:",
+	    "ccClicked:",
+	    "doubleClicked:",
+	    "emailLabelChanged:",
+	    "openClicked:",
+	    "selectionInBrowserHasChanged:",
+	    "toClicked:"
+	);
+	Super = NSObject;
+    };
+    StripeTableView = {
+	Actions = (
+	);
+	Outlets = (
+	);
+	Super = NSTableView;
+    };
+}

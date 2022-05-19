@@ -1,0 +1,12 @@
+{
+    "## Comment" = "Do NOT change this file, Gorm maintains it";
+    AboutPanelController = {
+	Actions = (
+	);
+	Outlets = (
+	    versionLabel,
+	    copyrightLabel
+	);
+	Super = NSWindowController;
+    };
+}

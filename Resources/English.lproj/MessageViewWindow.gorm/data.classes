@@ -1,0 +1,50 @@
+{
+    "## Comment" = "Do NOT change this file, Gorm maintains it";
+    ExtendedTextView = {
+	Actions = (
+	    "draggingExited:",
+	    "concludeDragOperation:"
+	);
+	Outlets = (
+	);
+	Super = NSTextView;
+    };
+    ExtendedWindow = {
+	Actions = (
+	);
+	Outlets = (
+	);
+	Super = NSWindow;
+    };
+    FirstResponder = {
+	Actions = (
+	    "concludeDragOperation:",
+	    "deleteMessage:",
+	    "draggingExited:",
+	    "forwardMessage:",
+	    "nextMessage:",
+	    "previousMessage:",
+	    "replyAllMessage:",
+	    "replyMessage:"
+	);
+	Super = NSObject;
+    };
+    MessageViewWindowController = {
+	Actions = (
+	    "replyMessage:",
+	    "nextMessage:",
+	    "forwardMessage:",
+	    "replyAllMessage:",
+	    "deleteMessage:",
+	    "previousMessage:"
+	);
+	Outlets = (
+	    navigationView,
+	    nextMessage,
+	    textView,
+	    previousMessage,
+	    deleteView
+	);
+	Super = NSWindowController;
+    };
+}
