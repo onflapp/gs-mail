@@ -1601,6 +1601,9 @@
       [sendAuthenticateUsingButton setState: [[allValues objectForKey: @"SMTP_AUTH"] intValue]];
       NSLog(@"SMTP_AUTH!");
       // If the method is not in the popup button, let's add it.
+      /* 
+       * this will freeze the UI, if we do it at the start
+       *
       if (![sendSupportedMechanismsPopUp itemWithTitle: [allValues objectForKey: @"SMTP_AUTH_MECHANISM"]])
 	{
 	  NSMenuItem *theItem;
@@ -1614,6 +1617,7 @@
 	  [[sendSupportedMechanismsPopUp menu] addItem: theItem];
 	  RELEASE(theItem);
 	}
+      */
 
       [sendSupportedMechanismsPopUp selectItemWithTitle: [allValues objectForKey: @"SMTP_AUTH_MECHANISM"]];
     }
