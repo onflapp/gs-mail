@@ -439,7 +439,7 @@ static NSData *CRLF;
 		  // parsing all the received bytes, we remove the
 		  // last line added since it corresponds to our
 		  // multi-line response terminator.
-      NSLog(@"%d LINE [%@]", _rbuf_last_pos, [[NSString alloc] initWithData:aData encoding:NSASCIIStringEncoding]);
+                  [self logServerResponse:aData];
 		  [_responsesFromServer removeLastObject];
 		  [self _parseServerOutput];
 		  return;
@@ -460,7 +460,7 @@ static NSData *CRLF;
 		  _lastCommand != POP3_UIDL &&
 		  (count > 2 && strncmp("+OK", buf, 3) == 0))
 		{
-      NSLog(@"%d LINE [%@]", _rbuf_last_pos, [[NSString alloc] initWithData:aData encoding:NSASCIIStringEncoding]);
+                  [self logServerResponse:aData];
 		  [self _parseServerOutput];
 		  return;
 		}
@@ -472,7 +472,7 @@ static NSData *CRLF;
 		  _lastCommand != POP3_RETR_AND_INITIALIZE &&
 		  (count > 3 && strncmp("-ERR", buf, 4) == 0))
 		{
-      NSLog(@"%d LINE [%@]", _rbuf_last_pos, [[NSString alloc] initWithData:aData encoding:NSASCIIStringEncoding]);
+                  [self logServerResponse:aData];
 		  [self _parseServerOutput];
 		  return;
 		}
@@ -1013,7 +1013,7 @@ static NSData *CRLF;
       break;
 
     default:
-      //NSLog(@"UNKNOWN POP3 LAST COMMAND %d", _lastCommand);
+      NSLog(@"UNKNOWN POP3 LAST COMMAND %d", _lastCommand);
       break;
       // FIXME
     }

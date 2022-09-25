@@ -464,6 +464,15 @@ void socket_callback(CFSocketRef s, CFSocketCallBackType type, CFDataRef address
   [self subclassResponsibility: _cmd];
 }
 
+- (void) logClientRequest:(NSData*) data {
+  NSLog(@"C:[%@]", [data asciiString]);
+}
+
+- (void) logServerResponse:(NSData*) data 
+{
+  NSLog(@"S:[%@]", [data asciiString]);
+}
+
 //
 //
 //
@@ -485,7 +494,8 @@ void socket_callback(CFSocketRef s, CFSocketCallBackType type, CFDataRef address
     {
       if (*end == '\n' && *(end-1) == '\r')
 	{
-	  NSData *aData = [NSData dataWithBytes:start length: (_rbuf_last_pos-start_pos-1)];
+          NSUInteger l = _rbuf_last_pos - start_pos - 1;
+	  NSData *aData = [NSData dataWithBytes:start length: (l)];
           _rbuf_last_pos++;
 	  return aData;
 	}
@@ -632,7 +642,7 @@ void socket_callback(CFSocketRef s, CFSocketCallBackType type, CFDataRef address
 
       [_wbuf appendData: theData];
 
-      NSLog(@"[%@]", [[NSString alloc] initWithData:theData encoding:NSASCIIStringEncoding]);
+      [self logClientRequest:theData];
       //
       // Let's not try to enable the write callback if we are not connected
       // There's no reason to try to enable the write callback if we

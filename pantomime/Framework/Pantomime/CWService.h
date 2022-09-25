@@ -493,6 +493,9 @@ typedef enum {ET_RDESC, ET_WDESC, ET_EDESC} RunLoopEventType;
 */       
 - (int) reconnect;
 
+- (void) logServerResponse:(NSData*) data;
+- (void) logClientRequest:(NSData*) data;
+
 /*!
   @method updateRead
   @discussion This method is invoked automatically when bytes are available
