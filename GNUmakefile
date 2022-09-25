@@ -64,15 +64,7 @@ GNUMail_RESOURCE_FILES = \
 	ScriptingInfo.plist
 
 GNUMail_LANGUAGES = \
-	Resources/Arabic \
-	Resources/Czech \
-	Resources/English \
-	Resources/German \
-	Resources/French \
-	Resources/Russian \
-	Resources/Spanish \
-	Resources/Swedish \
-	Resources/Turkish
+	Resources/English
 
 GNUMail_LIB_DIRS = -L../$(GNUSTEP_LIBRARIES_ROOT) -LFramework/GNUMail/GNUMail.framework/Versions/Current/$(GNUSTEP_TARGET_LDIR) -LFramework/GNUMail/GNUMail.framework
 GNUMail_GUI_LIBS = -lGNUMail -lPantomime -lAddresses -lAddressView

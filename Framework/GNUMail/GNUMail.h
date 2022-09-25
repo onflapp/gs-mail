@@ -36,9 +36,6 @@
 {
   // Outlets
   IBOutlet NSMenu *drafts;
-#ifdef MACOSX
-  IBOutlet NSMenu *dock;
-#endif
   IBOutlet NSMenu *columns;
   IBOutlet NSMenu *edit;
   IBOutlet NSMenu *filters;
@@ -66,13 +63,6 @@
   IBOutlet NSMenuItem *rename;
   IBOutlet NSMenuItem *selectAllMessagesInThread;
   IBOutlet NSMenuItem *threadOrUnthreadMessages;
-
-  //
-  // For scripting on Mac OS X. Simple instance variable for to-many relationships.
-  //
-#ifdef MACOSX
-  NSMutableArray *_messageCompositions;
-#endif
 }
 
 - (id) init;
@@ -200,26 +190,5 @@
 + (void) removeMailWindow: (id) theMailWindow;
 
 @end
-
-
-//
-// Experimental code used for Mac OS X scripting support.
-//
-#ifdef MACOSX
-
-@interface GNUMail (KeyValueCoding)
-
-- (BOOL)application:(NSApplication *)sender delegateHandlesKey:(NSString *)key;
-- (NSMutableArray*)messageCompositions;
-- (void)setMessageCompositions: (NSMutableArray*)messageCompositions;
-- (void) addInMessageCompositions: (MessageComposition *)object;
-- (void) insertInMessageCompositions: (MessageComposition *) object;
-- (void) insertInMessageCompositions: (MessageComposition *) object atIndex: (unsigned) index;
-- (void) replaceInMessageCompositions: (MessageComposition *) object atIndex: (unsigned) index;
-- (void) removeFromMessageCompositionsAtIndex: (unsigned) index;
-- (id) valueInMessageCompositionsAtIndex: (unsigned) index;
-
-@end
-#endif
 
 #endif // _GNUMail_H_GNUMail

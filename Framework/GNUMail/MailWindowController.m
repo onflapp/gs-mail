@@ -143,7 +143,7 @@
   [aToolbar setDelegate: self];
   [aToolbar setAllowsUserCustomization: YES];
   [aToolbar setAutosavesConfiguration: YES];
-  [[self window] setToolbar: aToolbar];
+  //[[self window] setToolbar: aToolbar];
   RELEASE(aToolbar);
 
   //
@@ -181,12 +181,7 @@
   [fromColumn setEditable: NO];
   [fromColumn setResizable: YES];
   [[fromColumn headerCell] setStringValue: _(@"From")];
-#ifdef MACOSX
-  [fromColumn setMinWidth: 120];
-  [fromColumn setWidth: 120];
-#else
   [fromColumn setMinWidth: 155];
-#endif
   [[fromColumn headerCell] setAlignment: NSLeftTextAlignment];
   [[fromColumn dataCell] setWraps: NO];
   
@@ -195,9 +190,6 @@
   [subjectColumn setResizable: YES];
   [[subjectColumn headerCell] setStringValue: _(@"Subject")];
   [subjectColumn setMinWidth: 195];
-#ifdef MACOSX
-  [subjectColumn setWidth: 260];
-#endif
   [subjectColumn setWidth: 195];
   [[subjectColumn headerCell] setAlignment: NSLeftTextAlignment];
   [[subjectColumn dataCell] setWraps: NO];

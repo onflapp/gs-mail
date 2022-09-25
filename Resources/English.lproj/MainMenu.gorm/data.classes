@@ -1,0 +1,297 @@
+{
+    "## Comment" = "Do NOT change this file, Gorm maintains it";
+    AutoCompletingTextField = {
+	Actions = (
+	    "complete:"
+	);
+	Outlets = (
+	);
+	Super = NSTextField;
+    };
+    EditWindowController = {
+	Actions = (
+	    "showCc:",
+	    "insertFile:",
+	    "accountSelectionHasChanged:",
+	    "sendMessage:",
+	    "showBcc:"
+	);
+	Outlets = (
+	    accountPopUpButton,
+	    send,
+	    subjectText,
+	    scrollView,
+	    sizeLabel,
+	    addCc,
+	    saveInDrafts,
+	    insert,
+	    toText,
+	    textView,
+	    ccText,
+	    addBcc,
+	    subjectLabel,
+	    ccLabel,
+	    addresses,
+	    toLabel,
+	    bccLabel,
+	    bccText
+	);
+	Super = NSWindowController;
+    };
+    ExtendedOutlineView = {
+	Actions = (
+	);
+	Outlets = (
+	);
+	Super = NSOutlineView;
+    };
+    ExtendedTextView = {
+	Actions = (
+	    "pasteAsQuoted:"
+	);
+	Outlets = (
+	);
+	Super = NSTextView;
+    };
+    FirstResponder = {
+	Actions = (
+	    "accountSelectionHasChanged:",
+	    "addSenderToAddressBook:",
+	    "applyManualFilter:",
+	    "changeTextEncoding:",
+	    "checkForUpdates:",
+	    "compactMailbox:",
+	    "composeMessage:",
+	    "copyOrMoveMessages:",
+	    "customizeToolbar:",
+	    "deleteMessage:",
+	    "doFind:",
+	    "doubleClickedOnDataView:",
+	    "enterSelectionInFindPanel:",
+	    "findNext:",
+	    "findPrevious:",
+	    "firstMessage:",
+	    "forwardMessage:",
+	    "getNewMessages:",
+	    "importMailboxes:",
+	    "insertFile:",
+	    "lastMessage:",
+	    "makeFilterFromCc:",
+	    "makeFilterFromListId:",
+	    "makeFilterFromSender:",
+	    "makeFilterFromSubject:",
+	    "makeFilterFromTo:",
+	    "markMessageAsFlaggedOrUnflagged:",
+	    "markMessageAsReadOrUnread:",
+	    "newViewerWindow:",
+	    "nextInThread:",
+	    "nextMessage:",
+	    "nextUnreadMessage:",
+	    "openOrCloseDrawer:",
+	    "pageDownMessage:",
+	    "pageUpMessage:",
+	    "pasteAsQuoted:",
+	    "previousInThread:",
+	    "previousMessage:",
+	    "previousUnreadMessage:",
+	    "printMessage:",
+	    "redirectMessage:",
+	    "replyToMessage:",
+	    "restoreDraft:",
+	    "saveAllAttachments:",
+	    "saveAttachment:",
+	    "saveInDrafts:",
+	    "saveTextFromMessage:",
+	    "selectAllMessagesInThread:",
+	    "selectionInTextViewHasChanged:",
+	    "sendMessage:",
+	    "showAboutPanel:",
+	    "showAddressBook:",
+	    "showAllHeaders:",
+	    "showBcc:",
+	    "showCc:",
+	    "showConsoleWindow:",
+	    "showFindWindow:",
+	    "showMailboxInspectorPanel:",
+	    "showMailboxManager:",
+	    "showOrHideAllHeaders:",
+	    "showOrHideDeletedMessages:",
+	    "showOrHideReadMessages:",
+	    "showOrHideTableColumns:",
+	    "showOrHideToolbar:",
+	    "showPreferencesWindow:",
+	    "showRawSource:",
+	    "sortByDate:",
+	    "sortByName:",
+	    "sortByNumber:",
+	    "sortBySize:",
+	    "sortBySubject:",
+	    "threadOrUnthreadMessages:",
+	    "viewMessageInWindow:"
+	);
+	Super = NSObject;
+    };
+    GNUMail = {
+	Actions = (
+	    "sortBySize:",
+	    "makeFilterFromSubject:",
+	    "showMailboxManager:",
+	    "threadOrUnthreadMessages:",
+	    "getNewMessages:",
+	    "makeFilterFromCc:",
+	    "redirectMessage:",
+	    "makeFilterFromTo:",
+	    "selectAllMessagesInThread:",
+	    "nextUnreadMessage:",
+	    "sortByNumber:",
+	    "applyManualFilter:",
+	    "saveInDrafts:",
+	    "showRawSource:",
+	    "showAddressBook:",
+	    "addSenderToAddressBook:",
+	    "findPrevious:",
+	    "newViewerWindow:",
+	    "close:",
+	    "sortByName:",
+	    "showOrHideReadMessages:",
+	    "restoreDraft:",
+	    "compactMailbox:",
+	    "showFindWindow:",
+	    "customizeToolbar:",
+	    "showOrHideToolbar:",
+	    "makeFilterFromSender:",
+	    "checkForUpdates:",
+	    "findNext:",
+	    "showOrHideTableColumns:",
+	    "showConsoleWindow:",
+	    "sortByDate:",
+	    "printMessage:",
+	    "showPreferencesWindow:",
+	    "showAboutPanel:",
+	    "forwardMessage:",
+	    "cut:",
+	    "showMailboxInspectorPanel:",
+	    "importMailboxes:",
+	    "sortBySubject:",
+	    "saveTextFromMessage:",
+	    "composeMessage:",
+	    "saveAllAttachments:",
+	    "makeFilterFromListId:",
+	    "changeTextEncoding:",
+	    "saveAttachment:",
+	    "showAllHeaders:",
+	    "selectionInTextViewHasChanged:",
+	    "previousUnreadMessage:",
+	    "enterSelectionInFindPanel:",
+	    "paste:",
+	    "replyToMessage:",
+	    "copy:",
+	    "showOrHideDeletedMessages:"
+	);
+	Outlets = (
+	    create,
+	    mailbox,
+	    info,
+	    forward,
+	    find,
+	    showOrHideToolbar,
+	    dock,
+	    reply,
+	    view,
+	    enterSelection,
+	    incomingMailServers,
+	    save,
+	    edit,
+	    textEncodings,
+	    messageFilter,
+	    threadOrUnthreadMessages,
+	    sorting,
+	    selectAllMessagesInThread,
+	    columns,
+	    drafts,
+	    menu,
+	    customizeToolbar,
+	    filters,
+	    rename,
+	    windows,
+	    services,
+	    delete,
+	    message
+	);
+	Super = NSObject;
+    };
+    MailWindowController = {
+	Actions = (
+	    "pageUpMessage:",
+	    "doubleClickedOnDataView:",
+	    "markMessageAsReadOrUnread:",
+	    "replyToMessage:",
+	    "markMessageAsFlaggedOrUnflagged:",
+	    "getNewMessages:",
+	    "nextMessage:",
+	    "openOrCloseDrawer:",
+	    "copyOrMoveMessages:",
+	    "pageDownMessage:",
+	    "deleteMessage:",
+	    "viewMessageInWindow:",
+	    "nextInThread:",
+	    "nextUnreadMessage:",
+	    "lastMessage:",
+	    "previousUnreadMessage:",
+	    "previousInThread:",
+	    "doFind:",
+	    "firstMessage:",
+	    "previousMessage:"
+	);
+	Outlets = (
+	    searchField,
+	    subjectColumn,
+	    markAsReadOrUnreadContextMI,
+	    mailboxes,
+	    get,
+	    label,
+	    find,
+	    forward,
+	    sizeColumn,
+	    compose,
+	    textView,
+	    addresses,
+	    dateColumn,
+	    splitView,
+	    previous,
+	    statusColumn,
+	    flaggedColumn,
+	    drawer,
+	    outlineView,
+	    fromColumn,
+	    progressIndicator,
+	    reply,
+	    markAsFlaggedOrUnflaggedContextMI,
+	    idColumn,
+	    icon,
+	    textScrollView,
+	    tableScrollView,
+	    next,
+	    delete,
+	    dataView
+	);
+	Super = NSWindowController;
+    };
+    MessageViewWindowController = {
+	Actions = (
+	    "nextMessage:",
+	    "deleteMessage:",
+	    "showOrHideAllHeaders:",
+	    "firstMessage:",
+	    "replyToMessage:",
+	    "previousMessage:",
+	    "lastMessage:"
+	);
+	Outlets = (
+	    showOrHideAllHeaders,
+	    textView,
+	    raw
+	);
+	Super = NSWindowController;
+    };
+}
