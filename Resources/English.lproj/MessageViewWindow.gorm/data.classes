@@ -21,22 +21,33 @@
 	    "concludeDragOperation:",
 	    "deleteMessage:",
 	    "draggingExited:",
-	    "forwardMessage:",
+	    "showRawSource:",
 	    "nextMessage:",
 	    "previousMessage:",
 	    "replyAllMessage:",
-	    "replyMessage:"
+	    "replyMessage:",
+	    "replyToMessage:",
+	    "showOrHideAllHeaders:"
 	);
 	Super = NSObject;
+    };
+    MessageViewWindow = {
+	Actions = (
+	);
+	Outlets = (
+	    textView
+	);
+	Super = ExtendedWindow;
     };
     MessageViewWindowController = {
 	Actions = (
 	    "replyMessage:",
 	    "nextMessage:",
-	    "forwardMessage:",
 	    "replyAllMessage:",
 	    "deleteMessage:",
-	    "previousMessage:"
+	    "previousMessage:",
+	    "showOrHideAllHeaders:",
+	    "replyToMessage:"
 	);
 	Outlets = (
 	    navigationView,

@@ -29,11 +29,8 @@
 @interface MessageViewWindow : ExtendedWindow
 {
   @public
-    NSScrollView *textScrollView;
-    NSTextView *textView;
+    IBOutlet NSTextView *textView;
 }
-
-- (void) layoutWindow;
 
 @end
 

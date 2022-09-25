@@ -87,9 +87,6 @@
   int signaturePosition;
   int _mode;
 
-  NSMutableArray *allowedToolbarItemIdentifiers;
-  NSMutableDictionary *additionalToolbarItems;
-
   @private
     NSMutableArray *addressCompletionCandidates;
     NSString *previousSignatureValue;

@@ -35,9 +35,7 @@
 #import "ThreadArcsCell.h"
 #import "Utilities.h"
 
-#ifndef MACOSX
 #import "MessageViewWindow.h"
-#endif
 
 #import <Pantomime/CWContainer.h>
 #import <Pantomime/CWConstants.h>
@@ -60,33 +58,9 @@
 {
   NSToolbar *aToolbar;
 
-#ifdef MACOSX
-  self = [super initWithWindowNibName: theWindowNibName];
-#else
-  MessageViewWindow *aMessageViewWindow;
-  
-  aMessageViewWindow = [[MessageViewWindow alloc] initWithContentRect: NSMakeRect(150,100,720,600)
-						  styleMask: NSClosableWindowMask|NSTitledWindowMask|
-						  NSMiniaturizableWindowMask|NSResizableWindowMask
-						  backing: NSBackingStoreRetained
-						  defer: NO];
-
-  self = [super initWithWindow: aMessageViewWindow];
-  
-  [aMessageViewWindow layoutWindow];
-  [aMessageViewWindow setDelegate: self];
-  textView = aMessageViewWindow->textView;
-  RELEASE(aMessageViewWindow);
-#endif
+  self = [super initWithWindowNibName: @"MessageViewWindow"];
   
   [[self window] setTitle: @""];
-  
-  aToolbar = [[NSToolbar alloc] initWithIdentifier: @"MessageViewWindowToolbar"];
-  [aToolbar setDelegate: self];
-  [aToolbar setAllowsUserCustomization: YES];
-  [aToolbar setAutosavesConfiguration: YES];
-  [[self window] setToolbar: aToolbar];
-  RELEASE(aToolbar);
   
   [[self window] setFrameAutosaveName: @"MessageViewWindow"];
   [[self window] setFrameUsingName: @"MessageViewWindow"];
@@ -116,9 +90,6 @@
   
   // Set out textview to non-editable
   [textView setEditable: NO];
-  
-  // Set ourselves up as the delegate
-  [textView setDelegate: self];
   
   return self;
 }

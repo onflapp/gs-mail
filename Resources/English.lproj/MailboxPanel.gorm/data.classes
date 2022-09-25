@@ -1,0 +1,47 @@
+{
+    "## Comment" = "Do NOT change this file, Gorm maintains it";
+    ExtendedOutlineView = {
+	Actions = (
+	);
+	Outlets = (
+	);
+	Super = NSOutlineView;
+    };
+    FirstResponder = {
+	Actions = (
+	    "changeSize:",
+	    "closeWindowsForStore:",
+	    "create:",
+	    "rename:",
+	    "setCurrentOutlineView:",
+	    "setMailboxAs:",
+	    "takeOffline:"
+	);
+	Super = NSObject;
+    };
+    MailboxManager = {
+	Actions = (
+	);
+	Outlets = (
+	    outlineView
+	);
+	Super = NSPanel;
+    };
+    MailboxManagerController = {
+	Actions = (
+	    "changeSize:",
+	    "open:",
+	    "create:",
+	    "delete:",
+	    "rename:",
+	    "takeOffline:",
+	    "setMailboxAs:",
+	    "closeWindowsForStore:",
+	    "setCurrentOutlineView:"
+	);
+	Outlets = (
+	    outlineView
+	);
+	Super = NSWindowController;
+    };
+}

@@ -40,11 +40,6 @@
 
 @interface MailboxManagerController: NSWindowController
 {
-  // Outlets - PS: _no_ view under OS X, only the model/controller.
-  // The view is actually owned by the MailWindowController under OS X.
-  // FIXME needs to be adapted when supporting Floating and Drawer
-  IBOutlet NSScrollView *scrollView;
-
   IBOutlet ExtendedOutlineView *outlineView;
   IBOutlet NSMenu *menu;
 

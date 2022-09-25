@@ -31,48 +31,24 @@
 
 - (void) dealloc
 {
-  RELEASE(textScrollView);
-  RELEASE(textView);
   [super dealloc];
 }
 
-
 //
 //
 //
-- (void) layoutWindow
+- (void) awakeFromNib
 {  
-  NSRect aRect;
-
-  textScrollView = [[NSScrollView alloc] initWithFrame: NSMakeRect(5,5,710,580)];
-  [textScrollView setBorderType: NSBezelBorder];
-  [textScrollView setHasHorizontalScroller: NO];
-  [textScrollView setHasVerticalScroller: YES];
-  [textScrollView setAutoresizingMask: NSViewWidthSizable|NSViewHeightSizable];
- 
-  aRect = [[textScrollView contentView] frame];
-  textView = [[ExtendedTextView alloc] init];
-  [textView setFrame: aRect];
   [textView setTextContainerInset: NSMakeSize(5,5)];
   [textView setBackgroundColor: [NSColor textBackgroundColor]];
   [textView setRichText: YES];
   [textView setUsesFontPanel: YES];
-  [textView setDelegate: [self windowController]];
   [textView setHorizontallyResizable: NO];
   [textView setVerticallyResizable: YES];
-  [textView setMinSize: NSMakeSize (0, 0)];
-  [textView setMaxSize: NSMakeSize (1E7, 1E7)];
-  [textView setAutoresizingMask: NSViewHeightSizable|NSViewWidthSizable];
-  [[textView textContainer] setContainerSize: NSMakeSize(aRect.size.width, 1E7)];
 
   [[textView textContainer] setWidthTracksTextView: YES];
   [textView setEditable: NO];
   [textView setString: @""];
-  
-  [textScrollView setDocumentView: textView];
-  
-  [[self contentView] addSubview: textScrollView];
-  [self setMinSize: NSMakeSize(400,450)];
 }
 
 @end

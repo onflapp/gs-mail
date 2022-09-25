@@ -34,57 +34,21 @@
 
 - (void) dealloc
 {
-  RELEASE(mailboxColumn);
-  RELEASE(messagesColumn);
-  RELEASE(outlineView);
-  RELEASE(scrollView);
   [super dealloc];
 }
 
-
 //
 //
 //
-- (void) layoutWindow
+- (void) awakeFromNib
 {
-  mailboxColumn = [[NSTableColumn alloc] initWithIdentifier: @"Mailbox"];
-  [mailboxColumn setEditable: YES];
-  [[mailboxColumn headerCell] setStringValue: _(@"Mailbox")];
-  [mailboxColumn setMinWidth: 125];
-
-  messagesColumn = [[NSTableColumn alloc] initWithIdentifier: @"Messages"];
-  [messagesColumn setEditable: NO];
-  [[messagesColumn headerCell] setStringValue: _(@"Messages")];
-  [messagesColumn setMinWidth: 75];
-
-  outlineView = [[ExtendedOutlineView alloc] initWithFrame: NSMakeRect (0, 0, 220, 300)];
-  [outlineView addTableColumn: mailboxColumn];
-  [outlineView addTableColumn: messagesColumn];
-  [outlineView setOutlineTableColumn: mailboxColumn];
-  [outlineView setDrawsGrid: NO];
+  [outlineView setHeaderView: nil];
   [outlineView setIndentationPerLevel: 10];
   [outlineView setAutoresizesOutlineColumn: YES];
   [outlineView setIndentationMarkerFollowsCell: YES];
-  [outlineView setAllowsColumnSelection: NO];
-  [outlineView setAllowsColumnReordering: NO];
-  [outlineView setAllowsEmptySelection: YES];
-  [outlineView setAllowsMultipleSelection: YES];
   [outlineView setAutoresizesAllColumnsToFit: YES];
   [outlineView sizeLastColumnToFit];
   [outlineView setIndentationPerLevel: 5];
-  [outlineView setDataSource: [self windowController]];
-  [outlineView setDelegate: [self windowController]];
-
-  scrollView = [[NSScrollView alloc] initWithFrame: NSMakeRect (0, 0, 220, 300)];
-  [scrollView setDocumentView: outlineView];
-  [scrollView setHasHorizontalScroller: NO];
-  [scrollView setHasVerticalScroller: YES];
-  [scrollView setBorderType: NSBezelBorder];
-  [scrollView setAutoresizingMask: NSViewWidthSizable|NSViewHeightSizable];
-  [[self contentView] addSubview: scrollView];
-  [self setInitialFirstResponder:outlineView];
-
-  [self setMinSize: NSMakeSize(220,300)];
 }
 
 @end

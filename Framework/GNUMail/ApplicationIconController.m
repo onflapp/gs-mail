@@ -199,7 +199,6 @@ NSUInteger number_of_unread_messages()
 //
 //
 //
-#ifndef MACOSX
 @interface ApplicationIconView : NSView
 {
   @private
@@ -221,7 +220,7 @@ NSUInteger number_of_unread_messages()
     {
       currentServer = [[[NSThread currentThread] threadDictionary] objectForKey:@"NSCurrentServerThreadKey"];
       _icon = [NSImage imageNamed: @"GNUMail"];
-      [_icon setScalesWhenResized: YES];
+      [_icon setScalesWhenResized: NO];
       if (currentServer && [currentServer respondsToSelector: @selector(iconSize)])
 	{
 	  serverIconSize = [currentServer iconSize];
@@ -232,8 +231,8 @@ NSUInteger number_of_unread_messages()
       else
 	{
 	  serverIconSize = NSMakeSize(64,64);
-	  [_icon setSize: NSMakeSize(56,56)];
-	  _borderPoint = NSMakePoint(0, 4);
+	  [_icon setSize: NSMakeSize(48,48)];
+	  _borderPoint = NSMakePoint(8, 8);
 	}
       RETAIN(_icon);
 
@@ -242,7 +241,7 @@ NSUInteger number_of_unread_messages()
       if (currentServer && [currentServer respondsToSelector:@selector(iconTileImage)])
 	{
 	  _tile = [[currentServer iconTileImage] copy];
-	  [_tile setScalesWhenResized:YES];
+	  [_tile setScalesWhenResized:NO];
 	  [_tile setSize:serverIconSize];
 	}
       else
@@ -295,9 +294,6 @@ NSUInteger number_of_unread_messages()
 }
 
 @end
-#endif
-
-
 
 //
 //
@@ -312,9 +308,7 @@ NSUInteger number_of_unread_messages()
     {
       _cache = NSCreateMapTable(NSObjectMapKeyCallBacks, NSObjectMapValueCallBacks, 16);
 
-#ifndef MACOSX
       [[[NSApp iconWindow] contentView] addSubview: AUTORELEASE([[ApplicationIconView alloc] init])];
-#endif
 
       [[NSNotificationCenter defaultCenter]
 	addObserver: self
@@ -361,54 +355,7 @@ NSUInteger number_of_unread_messages()
 //
 - (void) update
 {
-#ifndef MACOSX
   [[[NSApp iconWindow] contentView] setNeedsDisplay: YES];
-#elif defined(__APPLE__) && (MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4)
-  NSImage *currImage = [NSApp applicationIconImage];
-  NSImage *image;
-  NSUInteger v;
-  
-  image = [NSImage imageNamed: @"GNUMail"];
-  [image setScalesWhenResized:YES];
-  [image setSize: [currImage size]];
-  [image lockFocus];
-  
-  v = number_of_unread_messages();
-
-  if (previous_unread_count != NSNotFound && previous_unread_count < v)
-    {
-      [NSApp requestUserAttention: NSInformationalRequest];
-    }
-
-  previous_unread_count = v;
-
-  if (v > 0)
-    {
-      draw_value(v, [image size]);
-    }
-  
-  [image unlockFocus];
-  [NSApp setApplicationIconImage: image];
-#else
-  NSUInteger v;
-
-  v = number_of_unread_messages();
-    
-  if (previous_unread_count != NSNotFound && previous_unread_count < v)
-    {
-      [NSApp requestUserAttention: NSInformationalRequest];
-    }
-    
-    previous_unread_count = v;
-    
-    if (v > 0)
-      {
-	NSDockTile *dt;
-	  
-	dt = [NSApp dockTile];
-	[dt setBadgeLabel:[NSString stringWithFormat:@"%d", (unsigned long)v]];
-      }
-#endif
 }
 
 //

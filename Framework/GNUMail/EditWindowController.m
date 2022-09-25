@@ -78,34 +78,6 @@
 			       NULL, \
 			       s);
 
-#ifdef MACOSX
-#define L_X 8
-#define L_HEIGHT 17
-#define L_WIDTH 55
-
-#define Y_DELTA 26
-#define W_DELTA 91
-
-#define F_X 71
-#define F_HEIGHT 22
-
-#define S_X 0
-#define S_Y 0
-#else
-#define L_X 5
-#define L_HEIGHT 17
-#define L_WIDTH 55
-
-#define Y_DELTA 25
-#define W_DELTA 79
-
-#define F_X 65
-#define F_HEIGHT 21
-
-#define S_X 0
-#define S_Y 0
-#endif
-
 //
 // private methods
 //
@@ -142,26 +114,7 @@
 - (void) _setPlainTextContentFromString: (NSString *) theString
                                  inPart: (CWPart *) thePart;
 
-#ifdef MACOSX
-- (void) _sheetDidEnd: (NSWindow *) sheet
-           returnCode: (NSInteger) returnCode
-          contextInfo: (void *) contextInfo;
-
-- (void) _sheetDidDismiss: (NSWindow *) sheet
-               returnCode: (NSInteger) returnCode
-              contextInfo: (void *) contextInfo;
-#endif
-
-- (void) _updateViewWithMessage: (CWMessage *) theMessage
-                appendSignature: (BOOL) aBOOL;
-
-- (void) _updateSizeLabel;
-
-- (void) _updatePart: (CWPart *) thePart
- usingTextAttachment: (NSTextAttachment *) theTextAttachment;
-
 @end
-
 
 //
 //
@@ -193,40 +146,11 @@
   self = [super initWithWindowNibName: windowNibName];
   
   //
-  // We create our mutable array and our mutable dictionary allowing
-  // us to dynamically add toolbar items.
-  //
-  allowedToolbarItemIdentifiers = [[NSMutableArray alloc] initWithObjects: NSToolbarSeparatorItemIdentifier,
-							  NSToolbarSpaceItemIdentifier,
-							  NSToolbarFlexibleSpaceItemIdentifier,
-							  NSToolbarCustomizeToolbarItemIdentifier, 
-							  @"send",
-							  @"insert",
-							  @"add_cc",
-							  @"add_bcc",
-							  @"addresses",
-							  @"save_in_drafts",
-							  nil];
-  
-  additionalToolbarItems = [[NSMutableDictionary alloc] init];
-
-  //
   // We set our window title and edited attributes
   //
   [[self window] setTitle: @""];
   [[self window] setDocumentEdited: NO];
   
-  // We initialize our toolbar
-  aToolbar = [[NSToolbar alloc] initWithIdentifier: @"EditWindowToolbar"];
-  [aToolbar setDelegate: self];
-  [aToolbar setAllowsUserCustomization: YES];
-  [aToolbar setAutosavesConfiguration: YES];
-  [[self window] setToolbar: aToolbar];
-  RELEASE(aToolbar);
-  
-  RETAIN(ccLabel); RETAIN(ccText);
-  RETAIN(bccLabel); RETAIN(bccText);
-
   // We initialize our variables
   [self setShowCc: NO];
   [self setShowBcc: NO];
@@ -331,24 +255,10 @@
   [[self window] setDelegate: nil]; // FIXME not necessary in cocoa and in gnustep as of 2014-02-11, only for compatibility with old releases
   [[NSNotificationCenter defaultCenter] removeObserver: self];
 
-  RELEASE(ccLabel); RELEASE(ccText);
-  RELEASE(bccLabel); RELEASE(bccText);
-
   TEST_RELEASE(message);
   TEST_RELEASE(unmodifiedMessage);
   TEST_RELEASE(previousSignatureValue);
   TEST_RELEASE(charset);
-
-  RELEASE(send);
-  RELEASE(insert);
-  RELEASE(addCc);
-  RELEASE(addBcc);
-  RELEASE(addresses);
-  RELEASE(saveInDrafts);
-
-  RELEASE(allowedToolbarItemIdentifiers);
-  RELEASE(additionalToolbarItems);
-  RELEASE(addressCompletionCandidates);
 
   [super dealloc];
 }
@@ -1555,6 +1465,7 @@
   rectOfToText = [toText frame];
   widthOfScrollView = [scrollView frame].size.width;
 
+  /*
   if (showCc && showBcc)
     {
       // To - Y_DELTA
@@ -1619,6 +1530,7 @@
       // Space left...
       [scrollView setFrame: NSMakeRect(S_X,S_Y,widthOfScrollView,rectOfToText.origin.y-Y_DELTA*2-5)];
     }
+    */
 }
 
 
@@ -1868,6 +1780,7 @@
       
       if ( [aBundle hasComposeViewAccessory] )
 	{
+          /* TODO add tools from bundles
           NSToolbarItem *aToolbarItem;
           NSToolbar *aToolbar;
           id aView;
@@ -1889,6 +1802,7 @@
           aToolbar = [[self window] toolbar];
           [aToolbar insertItemWithItemIdentifier: [aBundle name]
                     atIndex: [[aToolbar visibleItems] count]];
+          */
 	}
 
       // We also set the current superview

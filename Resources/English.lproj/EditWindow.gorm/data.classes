@@ -52,9 +52,11 @@
 	Actions = (
 	    "accountSelectionHasChanged:",
 	    "insertFile:",
+	    "saveInDrafts:",
 	    "pasteAsQuoted:",
 	    "sendMessage:",
 	    "setDataSource:",
+	    "showAddressBook:",
 	    "showBcc:",
 	    "showCc:"
 	);

@@ -28,13 +28,9 @@
 
 @interface MailboxManager : NSPanel
 {
-  @public
-    NSTableColumn *mailboxColumn, *messagesColumn;
-    ExtendedOutlineView *outlineView;
-    NSScrollView *scrollView;
+  IBOutlet ExtendedOutlineView *outlineView;
 }
 
-- (void) layoutWindow;
 - (void) dealloc;
 
 @end

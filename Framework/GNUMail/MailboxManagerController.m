@@ -126,56 +126,23 @@ static MailboxManagerController *singleInstance = nil;
 
 - (id) init
 {
-  NSToolbar *aToolbar;
   id aCell;
-  MailboxManager *theWindow;
-  int preferredViewStyle;
 
-  preferredViewStyle = [[NSUserDefaults standardUserDefaults] integerForKey: @"PreferredViewStyle"  default: GNUMailDrawerView];
-  if (preferredViewStyle == GNUMailDrawerView)
+  self = [super initWithWindowNibName:@"MailboxPanel"];
+  if (self)
     {
-      self = [super init];
-      if (self)
-        {
-          ASSIGN(_cache, [MailboxManagerCache cacheFromDisk]);
-          [self windowDidLoad];
-        }
-    }
-  else if (preferredViewStyle == GNUMailFloatingView)
-    {
-      theWindow = [[MailboxManager alloc] initWithContentRect: NSMakeRect(200,200,220,300)
-						    styleMask: NSClosableWindowMask|NSTitledWindowMask|NSMiniaturizableWindowMask|NSResizableWindowMask
-						      backing: NSBackingStoreBuffered
-							defer: YES];
-
-      self = [super initWithWindow: theWindow];
-      if (self)
-        {
-          ASSIGN(_cache, [MailboxManagerCache cacheFromDisk]);
-          [self windowDidLoad];
-
-      [theWindow layoutWindow];
-      [theWindow setDelegate: self];
-
-      // We link our outlets
-      outlineView = theWindow->outlineView;
-      scrollView = theWindow->scrollView;
-      RELEASE(theWindow);
+      ASSIGN(_cache, [MailboxManagerCache cacheFromDisk]);
 
       // We set the title of our window (causing it to be loaded under OS X)
       [[self window] setTitle: _(@"Mailboxes")];
-
-      aToolbar = [[NSToolbar alloc] initWithIdentifier: @"MailboxManagerToolbar"];
-      [aToolbar setDelegate: self];
-      [aToolbar setAllowsUserCustomization: YES];
-      [aToolbar setAutosavesConfiguration: YES];
-      [[self window] setToolbar: aToolbar];
-      RELEASE(aToolbar);
 
       // We now set our data cell for the "Mailbox" column
       aCell =  [[ImageTextCell alloc] init];
       [[outlineView tableColumnWithIdentifier: @"Mailbox"] setDataCell: aCell];
       AUTORELEASE(aCell);
+
+      [[outlineView tableColumnWithIdentifier: @"Mailbox"] setEditable: NO];
+      [[outlineView tableColumnWithIdentifier: @"Messages"] setEditable: NO];
 
       // We register the outline view for dragged types
       [outlineView registerForDraggedTypes: [NSArray arrayWithObject: MessagePboardType]];
@@ -187,16 +154,6 @@ static MailboxManagerController *singleInstance = nil;
       // We set our autosave name for our outline view
       [outlineView setAutosaveName: @"MailboxManager"];
       [outlineView setAutosaveTableColumns: YES];
-
-      // We set our outline view background color
-      if ([[NSUserDefaults standardUserDefaults] colorForKey: @"MAILBOXMANAGER_OUTLINE_COLOR"])
-	{
-	  [outlineView setBackgroundColor: [[NSUserDefaults standardUserDefaults]
-					     colorForKey: @"MAILBOXMANAGER_OUTLINE_COLOR"]];
-	  [scrollView setBackgroundColor: [[NSUserDefaults standardUserDefaults]
-					    colorForKey: @"MAILBOXMANAGER_OUTLINE_COLOR"]];
-	}
-        }
     }
   return self;
 }
@@ -209,10 +166,7 @@ static MailboxManagerController *singleInstance = nil;
 {
   [[NSNotificationCenter defaultCenter] removeObserver: self];
   
-  if ([[NSUserDefaults standardUserDefaults] integerForKey: @"PreferredViewStyle"  default: GNUMailDrawerView] == GNUMailFloatingView)
-    {
-      [[self window] setDelegate: nil];
-    }
+  [[self window] setDelegate: nil];
 
   RELEASE(menu);
   RELEASE(localNodes);
@@ -1184,9 +1138,7 @@ static MailboxManagerController *singleInstance = nil;
       [aStore createFolderWithName: aString  type: type  contents: nil];
     }
  
-#ifndef MACOSX
   [[self window] makeKeyAndOrderFront: self];
-#endif
 
   RELEASE(theController);
 }
@@ -2842,11 +2794,7 @@ static MailboxManagerController *singleInstance = nil;
       return;
     }
   
-#ifdef MACOSX
-  aMask = ([[NSApp currentEvent] modifierFlags] & NSAlternateKeyMask) == NSAlternateKeyMask;
-#else
   aMask = ([[NSApp currentEvent] modifierFlags] & NSControlKeyMask) == NSControlKeyMask;
-#endif
 
   // If we reuse our window controller...
   if ([theSender isKindOfClass: [NSMenuItem class]] || 
@@ -2882,7 +2830,6 @@ static MailboxManagerController *singleInstance = nil;
     }
 
   // And we show the window..
-  [[aMailWindowController window] orderFrontRegardless];
   [[aMailWindowController window] makeKeyAndOrderFront: nil];
 
   ADD_CONSOLE_MESSAGE(_(@"Local folder %@ opened."), theFolderName);
@@ -2914,11 +2861,7 @@ static MailboxManagerController *singleInstance = nil;
   
   BOOL reusingLastMailWindowOnTop, aMask;
 
-#ifdef MACOSX
-  aMask = ([[NSApp currentEvent] modifierFlags] & NSAlternateKeyMask) == NSAlternateKeyMask;
-#else
   aMask = ([[NSApp currentEvent] modifierFlags] & NSControlKeyMask) == NSControlKeyMask;
-#endif
 
   // Using IMAP, we currently only allow the user to have one folder open
   // at the time on the same CWIMAPStore.
@@ -2934,7 +2877,7 @@ static MailboxManagerController *singleInstance = nil;
       // to reopen that folder!
       if ( [[[[aWindow windowController] folder] name] isEqualToString: theFolderName] )
 	{
-	  [aWindow makeKeyAndOrderFront: self];
+	  //[aWindow makeKeyAndOrderFront: self];
 	  return;
 	}
 
@@ -3057,7 +3000,7 @@ static MailboxManagerController *singleInstance = nil;
     }
 #endif
 
-  [[aMailWindowController window] orderFrontRegardless];
+  //[[aMailWindowController window] orderFrontRegardless];
   [[aMailWindowController window] makeKeyAndOrderFront: nil];
 
   ADD_CONSOLE_MESSAGE(_(@"IMAP folder %@ on %@ opened."), theFolderName, [theStore name]);
