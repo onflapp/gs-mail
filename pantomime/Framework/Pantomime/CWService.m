@@ -497,14 +497,19 @@ void socket_callback(CFSocketRef s, CFSocketCallBackType type, CFDataRef address
           NSUInteger l = _rbuf_last_pos - start_pos - 1;
 	  NSData *aData = [NSData dataWithBytes:start length: (l)];
           _rbuf_last_pos++;
+          if (_rbuf_last_pos == count) {
+            NSLog(@"time to reset??");  
+            [_rbuf setLength:0];
+            _rbuf_last_pos = 0;
+          }
 	  return aData;
 	}
 
       end++;
     }
 
-  [_rbuf setLength:0];
-  _rbuf_last_pos = 0;
+  /* rest the last possition so that we can try again */
+  _rbuf_last_pos = start_pos;
   return nil;
 }
 
@@ -521,6 +526,7 @@ void socket_callback(CFSocketRef s, CFSocketCallBackType type, CFDataRef address
       NSData *aData;
 
       aData = [[NSData alloc] initWithBytes: buf  length: (NSUInteger)count];
+      NSLog(@"BUFF:[%@]", [aData asciiString]);
 
       if (_delegate && [_delegate respondsToSelector: @selector(service:receivedData:)])
 	{

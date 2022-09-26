@@ -911,16 +911,10 @@
   if (showCc)
     {
       [addCc setLabel: _(@"Remove Cc")];
-      [addCc setImage: [NSImage imageNamed: @"remove_cc_32.tiff"]];
-      [[[self window] contentView] addSubview: ccLabel];
-      [[[self window] contentView] addSubview: ccText];
     }
   else
     {
       [addCc setLabel: _(@"Add Cc")];
-      [addCc setImage: [NSImage imageNamed: @"add_cc_32.tiff"]];
-      [ccLabel removeFromSuperviewWithoutNeedingDisplay];
-      [ccText removeFromSuperviewWithoutNeedingDisplay];
     }
   
   [self _adjustWidgetsPosition];
@@ -947,16 +941,10 @@
   if (showBcc)
     {
       [addBcc setLabel: _(@"Remove Bcc")];
-      [addBcc setImage: [NSImage imageNamed: @"remove_bcc_32.tiff"]];
-      [[[self window] contentView] addSubview: bccLabel];
-      [[[self window] contentView] addSubview: bccText];
     }
   else
     {
       [addBcc setLabel: _(@"Add Bcc")];
-      [addBcc setImage: [NSImage imageNamed: @"add_bcc_32.tiff"]];
-      [bccLabel removeFromSuperviewWithoutNeedingDisplay];
-      [bccText removeFromSuperviewWithoutNeedingDisplay];
     }
 
   [self _adjustWidgetsPosition];
@@ -1465,72 +1453,23 @@
   rectOfToText = [toText frame];
   widthOfScrollView = [scrollView frame].size.width;
 
-  /*
-  if (showCc && showBcc)
-    {
-      // To - Y_DELTA
-      [ccLabel setFrame: NSMakeRect(L_X,rectOfToText.origin.y-Y_DELTA,L_WIDTH,L_HEIGHT)];
-      [ccText setFrame: NSMakeRect(F_X,rectOfToText.origin.y-Y_DELTA,widthOfScrollView-W_DELTA,F_HEIGHT)];
-      
-      // To - Y_DELTA*2
-      [bccLabel setFrame: NSMakeRect(L_X,rectOfToText.origin.y-Y_DELTA*2,L_WIDTH,L_HEIGHT)];
-      [bccText setFrame: NSMakeRect(F_X,rectOfToText.origin.y-Y_DELTA*2,widthOfScrollView-W_DELTA,F_HEIGHT)];
-      
-      // To - Y_DELTA*3
-      [subjectLabel setFrame: NSMakeRect(L_X-5,rectOfToText.origin.y-Y_DELTA*3,L_WIDTH+5,L_HEIGHT)];
-      [subjectText setFrame: NSMakeRect(F_X,rectOfToText.origin.y-Y_DELTA*3,widthOfScrollView-W_DELTA,F_HEIGHT)];
-      
-      // To - Y_DELTA*4
-      [sizeLabel setFrame: NSMakeRect(L_X,rectOfToText.origin.y-Y_DELTA*4,200,L_HEIGHT)];
-      
-      // Space left...
-      [scrollView setFrame: NSMakeRect(S_X,S_Y,widthOfScrollView,rectOfToText.origin.y-Y_DELTA*4-5)];
-    }	 
-  else if (showCc && !showBcc)
-    {
-      // To - Y_DELTA
-      [ccLabel setFrame: NSMakeRect(L_X,rectOfToText.origin.y-Y_DELTA,L_WIDTH,L_HEIGHT)];
-      [ccText setFrame: NSMakeRect(F_X,rectOfToText.origin.y-Y_DELTA,widthOfScrollView-W_DELTA,F_HEIGHT)];
-      
-      // To - Y_DELTA*2
-      [subjectLabel setFrame: NSMakeRect(L_X-5,rectOfToText.origin.y-Y_DELTA*2,L_WIDTH+5,L_HEIGHT)];
-      [subjectText setFrame: NSMakeRect(F_X,rectOfToText.origin.y-Y_DELTA*2,widthOfScrollView-W_DELTA,F_HEIGHT)];
-      
-      // To - Y_DELTA*3
-      [sizeLabel setFrame: NSMakeRect(L_X,rectOfToText.origin.y-Y_DELTA*3,200,L_HEIGHT)];
+  if (showCc) {
+    [ccLabel setHidden:NO];
+    [ccText setHidden:NO];
+  }
+  else {
+    [ccLabel setHidden:YES];
+    [ccText setHidden:YES];
+  }
 
-      // Space left...
-      [scrollView setFrame: NSMakeRect(S_X,S_Y,widthOfScrollView,rectOfToText.origin.y-Y_DELTA*3-5)];
-    }
-  else if (!showCc && showBcc)
-    {
-      // To - Y_DELTA
-      [bccLabel setFrame: NSMakeRect(L_X,rectOfToText.origin.y-Y_DELTA,L_WIDTH,L_HEIGHT)];
-      [bccText setFrame: NSMakeRect(F_X,rectOfToText.origin.y-Y_DELTA,widthOfScrollView-W_DELTA,F_HEIGHT)];
-      
-      // To - Y_DELTA*2
-      [subjectLabel setFrame: NSMakeRect(L_X-5,rectOfToText.origin.y-Y_DELTA*2,L_WIDTH+5,L_HEIGHT)];
-      [subjectText setFrame: NSMakeRect(F_X,rectOfToText.origin.y-Y_DELTA*2,widthOfScrollView-W_DELTA,F_HEIGHT)];
-      
-      // To - Y_DELTA*3
-      [sizeLabel setFrame: NSMakeRect(L_X,rectOfToText.origin.y-Y_DELTA*3,200,L_HEIGHT)];
-
-      // Space left...
-      [scrollView setFrame: NSMakeRect(S_X,S_Y,widthOfScrollView,rectOfToText.origin.y-Y_DELTA*3-5)];
-    }
-  else
-    {
-      // To - Y_DELTA
-      [subjectLabel setFrame: NSMakeRect(L_X-5,rectOfToText.origin.y-Y_DELTA,L_WIDTH+5,L_HEIGHT)];
-      [subjectText setFrame: NSMakeRect(F_X,rectOfToText.origin.y-Y_DELTA,widthOfScrollView-W_DELTA,F_HEIGHT)];
-      
-      // To - Y_DELTA*2
-      [sizeLabel setFrame: NSMakeRect(L_X,rectOfToText.origin.y-Y_DELTA*2,200,L_HEIGHT)];
-     
-      // Space left...
-      [scrollView setFrame: NSMakeRect(S_X,S_Y,widthOfScrollView,rectOfToText.origin.y-Y_DELTA*2-5)];
-    }
-    */
+  if (showBcc) {
+    [bccLabel setHidden:NO];
+    [bccText setHidden:NO];
+  }
+  else {
+    [bccLabel setHidden:YES];
+    [bccText setHidden:YES];
+  }
 }
 
 

@@ -283,12 +283,17 @@ static inline int has_literal(char *buf, unsigned c)
   while ((aData = [self nextDataLine]))
     {
       //NSLog(@"aLine = |%@|", [aData asciiString]);
+      [self logServerResponse:aData];
       buf = (char *)[aData bytes];
       count = [aData length];
+      if (count == 0) {
+        NSLog(@"empty data???");
+      }
 
       // If we are reading a literal, do so.
       if (_currentQueueObject && _currentQueueObject->literal)
 	{
+          NSLog(@"1: append data");
 	  _currentQueueObject->literal -= (count+2);
 	  //NSLog(@"literal = %d, count = %d", _currentQueueObject->literal, count);
 
@@ -375,6 +380,7 @@ static inline int has_literal(char *buf, unsigned c)
 	}
       else 
 	{
+          NSLog(@"2: append data");
 	  //NSLog(@"aLine = |%@|", [aData asciiString]);
 	  [_responsesFromServer addObject: aData];
 
@@ -2456,7 +2462,7 @@ static inline int has_literal(char *buf, unsigned c)
 
   aData = [_responsesFromServer lastObject];
   
-  //NSLog(@"IN _parseOK: |%@|", [aData asciiString]);
+  NSLog(@"IN _parseOK: [%@]", [aData asciiString]);
 
   switch (_lastCommand)
     {
@@ -2658,6 +2664,7 @@ static inline int has_literal(char *buf, unsigned c)
       break;
 
     default:
+      NSLog(@"IMAP unknown command %d", _lastCommand);
       break;
     }
 
