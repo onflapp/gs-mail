@@ -12,6 +12,7 @@
 	    "changeSize:",
 	    "closeWindowsForStore:",
 	    "create:",
+	    "getNewMessages:",
 	    "rename:",
 	    "setCurrentOutlineView:",
 	    "setMailboxAs:",
