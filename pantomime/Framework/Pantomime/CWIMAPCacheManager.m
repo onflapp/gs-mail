@@ -45,7 +45,7 @@
 #include <errno.h>
 #include <unistd.h>
 
-static uint16_t version = 1;
+static unsigned short version = 1;
 
 //
 //
@@ -55,7 +55,7 @@ static uint16_t version = 1;
 - (id) initWithPath: (NSString *) thePath  folder: (CWFolder *) theFolder
 {
   NSDictionary *attributes;
-  uint16_t v;
+  unsigned short int v;
 
   self = [super initWithPath: thePath];
   if (self)
@@ -67,11 +67,14 @@ static uint16_t version = 1;
       _folder = theFolder;
 
 
-      if ((_fd = open([thePath UTF8String], O_RDWR|O_CREAT, S_IRUSR|S_IWUSR)) < 0) 
+      if ((_fd = open([thePath UTF8String], O_RDWR, S_IRUSR|S_IWUSR)) < 0) 
 	{
-	  NSLog(@"CANNOT CREATE OR OPEN THE CACHE!)");
-	  abort();
-	}
+          if ((_fd = open([thePath UTF8String], O_RDWR|O_TRUNC|O_CREAT, S_IRUSR|S_IWUSR)) < 0) 
+            {
+	      NSLog(@"CANNOT CREATE OR OPEN THE CACHE!)");
+	      abort();
+	    }
+        }
 
       if (lseek(_fd, 0L, SEEK_SET) < 0)
 	{
@@ -89,6 +92,7 @@ static uint16_t version = 1;
 
 	  if (v != version)
 	    {
+              NSLog(@"invalid cache version, reset");
 	      if (ftruncate(_fd, 0) == -1)
 		{
 
@@ -117,6 +121,7 @@ static uint16_t version = 1;
 	}
       else
 	{
+          NSLog(@"empty cache file");
 	  [self synchronize];
 	}
     }
@@ -165,7 +170,7 @@ static uint16_t version = 1;
   begin = theRange.location;
   end = (NSMaxRange(theRange) <= _count ? NSMaxRange(theRange) : _count);
   
-  //NSLog(@"init from %d to %d, count = %d, size of char %d  UID validity = %d", begin, end, _count, sizeof(char), _UIDValidity);
+  NSLog(@"init from %d to %d, count = %d, size of char %d  UID validity = %d", begin, end, _count, sizeof(char), _UIDValidity);
 
   pool = [[NSAutoreleasePool alloc] init];
 
@@ -200,25 +205,25 @@ static uint16_t version = 1;
       tot = 16;
 
       
-      cr.from = read_data_memory(r+tot, &len);
+      cr.from = read_data(r+tot, &len);
       tot += len+2;
      
-      cr.in_reply_to = read_data_memory(r+tot, &len);
+      cr.in_reply_to = read_data(r+tot, &len);
       tot += len+2;
       
-      cr.message_id = read_data_memory(r+tot, &len);
+      cr.message_id = read_data(r+tot, &len);
       tot += len+2;
 
-      cr.references = read_data_memory(r+tot, &len);
+      cr.references = read_data(r+tot, &len);
       tot += len+2;
 
-      cr.subject = read_data_memory(r+tot, &len);
+      cr.subject = read_data(r+tot, &len);
       tot += len+2;
       
-      cr.to = read_data_memory(r+tot, &len);
+      cr.to = read_data(r+tot, &len);
       tot += len+2;
 
-      cr.cc = read_data_memory(r+tot, &len);
+      cr.cc = read_data(r+tot, &len);
 
       // zero unused fields
       cr.position = 0;
@@ -226,9 +231,11 @@ static uint16_t version = 1;
       cr.pop3_uid = NULL;
       
       aMessage = [[CWIMAPMessage alloc] initWithCacheRecord:cr];
+      aMessage->_cache_record = cr;
+      [aMessage _retainRecordCache];
       [aMessage setMessageNumber: (unsigned int)i+1];
 
-      [((CWFolder *)_folder)->allMessages addObject: aMessage];
+      [((CWFolder *)_folder)appendMessage: aMessage];
       NSMapInsert(_table, (void *)[aMessage UID], aMessage);
       //[self addObject: aMessage]; // MOVE TO CWFIMAPOLDER
       //[((CWFolder *)_folder)->allMessages replaceObjectAtIndex: i  withObject: aMessage];
@@ -293,13 +300,13 @@ static uint16_t version = 1;
   unsigned int len, flags;
   NSUInteger i;
 
-  _count = [_folder->allMessages count];
+  _count = [[_folder messages] count];
   
-  //NSLog(@"CWIMAPCacheManager: -synchronize with folder count = %d", _count);
+  NSLog(@"CWIMAPCacheManager: -synchronize with folder count = %d", _count);
 
   if (lseek(_fd, 0L, SEEK_SET) < 0)
     {
-      NSLog(@"fseek failed");
+      NSLog(@"lseek failed");
       abort();
     }
   
@@ -308,16 +315,12 @@ static uint16_t version = 1;
   write_uint32(_fd, (uint32_t)_count);
   write_uint32(_fd, _UIDValidity);
   
-  //NSLog(@"Synching flags");
-  for (i = 0; i < _count; i++)
+  NSResetMapTable(_table);
+  for (CWIMAPMessage *aMessage in [_folder messages]) 
     {
-      read_uint32(_fd, &len);
-      flags = ((CWFlags *)[[_folder->allMessages objectAtIndex: i] flags])->flags;
-      write_uint32(_fd, flags);
-      lseek(_fd, (len-8), SEEK_CUR);
+      [self writeRecord:&aMessage->_cache_record message:aMessage];
     }
-  //NSLog(@"Done!");
- 
+
   return (fsync(_fd) == 0);
 }
 
@@ -329,12 +332,6 @@ static uint16_t version = 1;
 {
   unsigned int len;
 
-  if (lseek(_fd, 0L, SEEK_END) < 0)
-    {
-      NSLog(@"COULD NOT LSEEK TO END OF FILE");
-      abort();
-    }
-  
   // We calculate the length of this record (including the
   // first five fields, which is 20 bytes long and is added
   // at the very end)
@@ -365,7 +362,6 @@ static uint16_t version = 1;
   write_data(_fd, theRecord->cc);
   
   NSMapInsert(_table, (void *)theRecord->imap_uid, theMessage);
-  _count++;
 }
 
 
@@ -449,7 +445,7 @@ static uint16_t version = 1;
     }
 
   // We write our cache version, count, modification date our new size
-  _count = [_folder->allMessages count];
+  _count = [[_folder messages] count];
   size = total_length+10;
 
   write_uint16(_fd, version);

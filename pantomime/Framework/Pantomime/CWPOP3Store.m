@@ -2,7 +2,7 @@
 **  CWPOP3Store.m
 **
 **  Copyright (c) 2001-2006 Ludovic Marcotte
-**  Copyright (C) 2017-2020 Riccardo Mottola
+**  Copyright (C) 2017-2022 Riccardo Mottola
 **
 **  Author: Ludovic Marcotte <ludovic@Sophos.ca>
 **          Riccardo Mottola <rm@gnu.org>
@@ -303,7 +303,7 @@ static NSData *CRLF;
 
 //
 // No other folder is allowed in POP3 other than the Inbox.
-// Also, this folder can only holds messages.
+// Also, this folder can only hold messages.
 //
 - (PantomimeFolderType) folderTypeForFolderName: (NSString *) theName
 {
@@ -409,15 +409,11 @@ static NSData *CRLF;
   NSUInteger count;
 
   [super updateRead];
-  if ([_rbuf length] == 0) return;
 
-  //NSLog(@"DATA SIZE %u", [_rbuf length]);
-
-  while ((aData = [self nextDataLine]))
+  while ((aData = split_lines(_rbuf)))
     {
       buf = (char *)[aData bytes];
       count = [aData length];
-
       [_responsesFromServer addObject: aData];
 
       if (count)
@@ -430,7 +426,10 @@ static NSData *CRLF;
 	      //
 	      if (count > 1)
 		{
-                  continue;
+		  aData = [NSMutableData dataWithData: aData];
+		  buf = [aData mutableBytes];
+		  memmove(buf, buf+1, count-2);
+		  [aData setLength: count-2];
 		}
 	      else
 		{
@@ -439,7 +438,6 @@ static NSData *CRLF;
 		  // parsing all the received bytes, we remove the
 		  // last line added since it corresponds to our
 		  // multi-line response terminator.
-                  [self logServerResponse:aData];
 		  [_responsesFromServer removeLastObject];
 		  [self _parseServerOutput];
 		  return;
@@ -460,7 +458,6 @@ static NSData *CRLF;
 		  _lastCommand != POP3_UIDL &&
 		  (count > 2 && strncmp("+OK", buf, 3) == 0))
 		{
-                  [self logServerResponse:aData];
 		  [self _parseServerOutput];
 		  return;
 		}
@@ -472,7 +469,6 @@ static NSData *CRLF;
 		  _lastCommand != POP3_RETR_AND_INITIALIZE &&
 		  (count > 3 && strncmp("-ERR", buf, 4) == 0))
 		{
-                  [self logServerResponse:aData];
 		  [self _parseServerOutput];
 		  return;
 		}
@@ -667,7 +663,7 @@ static NSData *CRLF;
     {
       sscanf([[_responsesFromServer objectAtIndex: i] cString], "%lu %lu", (unsigned long*)&idx, &size);
       
-      aMessage = [_folder->allMessages objectAtIndex: (idx-1)];
+      aMessage = [[_folder messages] objectAtIndex: (idx-1)];
       [aMessage setSize: size];
       [aMessage setMessageNumber: i];
     }
@@ -813,7 +809,7 @@ static NSData *CRLF;
 	{
 	  aMessage = [[CWPOP3Message alloc] init];
 	  [aMessage setFolder: _folder];
-	  [_folder->allMessages addObject: aMessage];
+	  [[_folder messages] addObject: aMessage];
 	  RELEASE(aMessage);
 	}
 
@@ -864,8 +860,8 @@ static NSData *CRLF;
     {
       NSMutableData *aMutableData;
       CWPOP3Message *aMessage;
-
-      int count, i, idx, num;
+      NSUInteger i, count;
+      int idx, num;
 
       // We get the idx of the message we are parsing...
       sscanf([((CWPOP3QueueObject *)[_queue lastObject])->arguments cString], "TOP %d %d", &idx, &num);
@@ -905,7 +901,7 @@ static NSData *CRLF;
     {
        memset(buf, 0, 71);
        sscanf([[_responsesFromServer objectAtIndex: i] cString],"%lu %s", (unsigned long*)&idx, buf);
-       [[_folder->allMessages objectAtIndex: (idx-1)] setUID: [NSString stringWithCString: buf]];
+       [[[_folder messages] objectAtIndex: (idx-1)] setUID: [NSString stringWithCString: buf]];
     }
 
   POST_NOTIFICATION(PantomimeFolderPrefetchCompleted, self, [NSDictionary dictionaryWithObject: _folder  forKey: @"Folder"]);
@@ -1013,7 +1009,7 @@ static NSData *CRLF;
       break;
 
     default:
-      NSLog(@"UNKNOWN POP3 LAST COMMAND %d", _lastCommand);
+      //NSLog(@"UNKNOWN POP3 LAST COMMAND %d", _lastCommand);
       break;
       // FIXME
     }

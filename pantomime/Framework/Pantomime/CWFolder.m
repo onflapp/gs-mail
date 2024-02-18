@@ -46,7 +46,7 @@
       _properties = [[NSMutableDictionary alloc] init];
       _allVisibleMessages = nil;
   
-      allMessages = [[NSMutableArray alloc] init];
+      _allMessages = [[NSMutableArray alloc] init];
   
       //
       // By default, we don't do message threading so we don't
@@ -78,8 +78,8 @@
   // To be safe, we set the value of the _folder ivar of all CWMessage
   // instances to nil value in case something is retaining them.
   //
-  [allMessages makeObjectsPerformSelector: @selector(setFolder:) withObject: nil];
-  RELEASE(allMessages);
+  [_allMessages makeObjectsPerformSelector: @selector(setFolder:) withObject: nil];
+  RELEASE(_allMessages);
 
   TEST_RELEASE(_allVisibleMessages);
   TEST_RELEASE(_cacheManager);
@@ -122,7 +122,7 @@
 {
   if (theMessage)
     {
-      [allMessages addObject: theMessage];
+      [_allMessages addObject: theMessage];
       
       if (_allVisibleMessages)
 	{
@@ -165,23 +165,30 @@
   return _allContainers;
 }
 
+//
+//
+//
+- (NSMutableArray *) messages
+{
+  return _allMessages;
+}
 
 //
 //
 //
-- (NSArray *) allMessages
+- (NSArray *) visibleMessages
 { 
   if (_allVisibleMessages == nil)
     {
       NSUInteger i, count;
 
-      count = [allMessages count];
+      count = [_allMessages count];
       _allVisibleMessages = [[NSMutableArray alloc] initWithCapacity: count];
 
       // quick
       if (_show_deleted && _show_read)
 	{
-	  [_allVisibleMessages addObjectsFromArray: allMessages];
+	  [_allVisibleMessages addObjectsFromArray: _allMessages];
 	  return _allVisibleMessages;
 	}
 
@@ -189,7 +196,7 @@
 	{
 	  CWMessage *aMessage;
 	  
-	  aMessage = [allMessages objectAtIndex: i];
+	  aMessage = [_allMessages objectAtIndex: i];
       
 	  // We show or hide deleted messages
 	  if (_show_deleted)
@@ -245,8 +252,8 @@
 {
   if (theMessages)
     {
-      RELEASE(allMessages);
-      allMessages = [[NSMutableArray alloc] initWithArray: theMessages];
+      RELEASE(_allMessages);
+      _allMessages = [[NSMutableArray alloc] initWithArray: theMessages];
 
       if (_allContainers)
 	{
@@ -255,7 +262,7 @@
     }
   else
     {
-      DESTROY(allMessages);
+      DESTROY(_allMessages);
     }
 
   DESTROY(_allVisibleMessages);
@@ -267,21 +274,21 @@
 //
 - (CWMessage *) messageAtIndex: (NSUInteger) theIndex
 {
-  if (theIndex >= [self count])
+  if (theIndex >= [self countVisible])
     {
       return nil;
     }
   
-  return [[self allMessages] objectAtIndex: theIndex];
+  return [[self visibleMessages] objectAtIndex: theIndex];
 }
 
 
 //
 //
 //
-- (NSUInteger) count
+- (NSUInteger) countVisible
 {
-  return [[self allMessages] count];
+  return [[self visibleMessages] count];
 }
 
 
@@ -330,7 +337,7 @@
 {
   if (theMessage)
     {
-      [allMessages removeObject: theMessage];
+      [_allMessages removeObject: theMessage];
       
       if (_allVisibleMessages)
 	{
@@ -400,12 +407,12 @@
 {
   NSUInteger c, i, count;
   
-  c = [allMessages count];
+  c = [_allMessages count];
   count = 0;
 
   for (i = 0; i < c; i++)
     {
-      if ([[[allMessages objectAtIndex: i] flags] contain: PantomimeDeleted])
+      if ([[[_allMessages objectAtIndex: i] flags] contain: PantomimeDeleted])
 	{
 	  count++;
 	}
@@ -422,12 +429,12 @@
 {
   NSUInteger i, c, count;
   
-  c = [allMessages count];
+  c = [_allMessages count];
   count = 0;
   
   for (i = 0; i < c; i++)
     {
-      if (![[[allMessages objectAtIndex: i] flags] contain: PantomimeSeen])
+      if (![[[_allMessages objectAtIndex: i] flags] contain: PantomimeSeen])
 	{
 	  count++;
 	}
@@ -445,12 +452,12 @@
   unsigned long size;
   NSUInteger c, i;
 
-  c = [allMessages count];
+  c = [_allMessages count];
   size = 0;
   
   for (i = 0; i < c; i++)
     {
-      size += [(CWMessage *)[allMessages objectAtIndex: i] size];
+      size += [(CWMessage *)[_allMessages objectAtIndex: i] size];
     }
 
   return size;
@@ -489,7 +496,7 @@
   //
   // 1. A., B. and C.
   //
-  count = [allMessages count];
+  count = [_allMessages count];
   for (i = 0; i < count; i++)
     {
       CWContainer *aContainer;
@@ -502,7 +509,7 @@
       aMessage = nil;
       aReference = nil;
 
-      aMessage = [allMessages objectAtIndex: i];
+      aMessage = [_allMessages objectAtIndex: i];
       
       // We skip messages that don't have a valid Message-ID
       if (![aMessage messageID])
@@ -872,11 +879,11 @@
 {
   NSUInteger count;
 
-  count = [allMessages count];
+  count = [_allMessages count];
   
   while (count--)
     {
-      [[allMessages objectAtIndex: count] setProperty: nil  forKey: @"Container"];
+      [[_allMessages objectAtIndex: count] setProperty: nil  forKey: @"Container"];
     }
 
   DESTROY(_allContainers);

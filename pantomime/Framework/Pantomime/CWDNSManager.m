@@ -2,7 +2,7 @@
 **  CWDNSManager.m
 **
 **  Copyright (c) 2004-2007 Ludovic Marcotte
-**  Copyright (C) 2012-2018 Riccardo Mottola
+**  Copyright (C) 2012-2022 Riccardo Mottola
 **
 **  Author: Ludovic Marcotte <ludovic@Sophos.ca>
 **          Riccardo Mottola <rm@gnu.org>
@@ -65,26 +65,26 @@ static CWDNSManager *singleInstance = nil;
 
 typedef struct _dns_packet_header
 {
-  uint16_t packet_id;
-  uint16_t flags;
-  uint16_t qdcount;
-  uint16_t ancount;
-  uint16_t nscount;
-  uint16_t arcount;
+  unsigned short packet_id;
+  unsigned short flags;
+  unsigned short qdcount;
+  unsigned short ancount;
+  unsigned short nscount;
+  unsigned short arcount;
 } dns_packet_header;
 
 typedef struct _dns_packet_question
 {
-  uint16_t qtype;
-  uint16_t qclass;
+  unsigned short qtype;
+  unsigned short qclass;
 } dns_packet_question;
 
 typedef struct _dns_resource_record
 {
-  uint16_t type;
-  uint16_t class;
+  unsigned short type;
+  unsigned short class;
   unsigned int ttl;
-  uint16_t rdlength;
+  unsigned short rdlength;
 } dns_resource_record;
 
 #ifdef MACOSX
@@ -107,13 +107,18 @@ void dns_socket_callback(CFSocketRef s, CFSocketCallBackType type, CFDataRef add
 //
 @interface CWDNSRequest : NSObject
 {
-  @public
+  @protected
     NSMutableArray *servers;
     NSData *name;
-    uint16_t packet_id, count;
+
+  @public
+    unsigned short packet_id, count;
 }
 
 - (id) initWithName: (NSString *) theName;
+- (NSMutableArray *) servers;
+- (void) setServers: (NSMutableArray *)serverArray;
+- (NSData *) name;
 
 @end
 
@@ -129,6 +134,21 @@ void dns_socket_callback(CFSocketRef s, CFSocketCallBackType type, CFDataRef add
       count = 0;
     }
   return self;
+}
+
+- (NSMutableArray *) servers
+{
+  return servers;
+}
+
+- (void) setServers: (NSMutableArray *)serverArray
+{
+  ASSIGN(self->servers, serverArray);
+}
+
+- (NSData *) name
+{
+  return name;
 }
 
 - (void) dealloc
@@ -270,7 +290,7 @@ void dns_socket_callback(CFSocketRef s, CFSocketCallBackType type, CFDataRef add
   o = [_cache objectForKey: theName];
   
   if (theBOOL)
-    {      
+    {
       if (o)
 	{
 	  POST_NOTIFICATION(PantomimeDNSResolutionCompleted, self, ([NSDictionary dictionaryWithObjectsAndKeys: theName, @"Name", [o objectAtIndex: 0], @"Address", nil]));
@@ -278,9 +298,13 @@ void dns_socket_callback(CFSocketRef s, CFSocketCallBackType type, CFDataRef add
       else
 	{
 	  CWDNSRequest *aRequest;
+	  NSMutableArray *serversCopy;
+
+	  serversCopy = [[NSMutableArray alloc] initWithArray: _servers];
 	  aRequest = AUTORELEASE([[CWDNSRequest alloc] initWithName: theName]);
 	  aRequest->packet_id = _packet_id++;
-	  aRequest->servers = [[NSMutableArray alloc] initWithArray: _servers];
+	  [aRequest setServers: serversCopy];
+	  [serversCopy release];
 	  aRequest->count = 0;
 
 	  if ([_servers count])
@@ -492,7 +516,7 @@ void dns_socket_callback(CFSocketRef s, CFSocketCallBackType type, CFDataRef add
   dns_packet_header *header;
 
   char *buf, qr, ra, rcode, *start;
-  uint16_t flags, i, type;
+  unsigned short flags, i, type;
   uint8_t c0, c1, c2, c3;
   uint32_t r;
 
@@ -622,7 +646,7 @@ void dns_socket_callback(CFSocketRef s, CFSocketCallBackType type, CFDataRef add
   
   r = ntohl((uint32_t)((c0<<24)|(c1<<16)|(c2<<8)|c3));
 
-  aString = AUTORELEASE([[NSString alloc] initWithData: aRequest->name  encoding: NSASCIIStringEncoding]);
+  aString = AUTORELEASE([[NSString alloc] initWithData: [aRequest name]  encoding: NSASCIIStringEncoding]);
   aNumber = [NSNumber numberWithUnsignedInt: r];
 
   POST_NOTIFICATION(PantomimeDNSResolutionCompleted, self, ([NSDictionary dictionaryWithObjectsAndKeys: aString, @"Name", aNumber, @"Address", nil]));
@@ -652,7 +676,7 @@ void dns_socket_callback(CFSocketRef s, CFSocketCallBackType type, CFDataRef add
   peer_address.sin_family = PF_INET;
   peer_address.sin_port = htons(53);
 
-  peer_address.sin_addr.s_addr = [[theRequest->servers objectAtIndex: 0] unsignedIntValue];
+  peer_address.sin_addr.s_addr = [[[theRequest servers] objectAtIndex: 0] unsignedIntValue];
   start = packet = (char *)malloc(MAX_PACKET_SIZE);
 
   // We build our packet header. We have to set:
@@ -684,7 +708,7 @@ void dns_socket_callback(CFSocketRef s, CFSocketCallBackType type, CFDataRef add
   // that this field may be an odd number of octets; no
   // padding is used.
   //
-  subdomains = [theRequest->name componentsSeparatedByCString: "."];
+  subdomains = [[theRequest name] componentsSeparatedByCString: "."];
   
   for (i = 0; i < [subdomains count]; i++)
     {
@@ -728,9 +752,9 @@ void dns_socket_callback(CFSocketRef s, CFSocketCallBackType type, CFDataRef add
 	  
 	  if (aRequest->count == MAX_TIMEOUT)
 	    {
-	      if ([aRequest->servers count] > 1)
+	      if ([[aRequest servers] count] > 1)
 		{
-		  [aRequest->servers removeObjectAtIndex: 0];
+		  [[aRequest servers] removeObjectAtIndex: 0];
 		  aRequest->count = 0;
 		  
 		  [self _sendRequest: aRequest];
@@ -739,7 +763,7 @@ void dns_socket_callback(CFSocketRef s, CFSocketCallBackType type, CFDataRef add
 		{
 		  NSDictionary *aDictionary;
 
-		  aDictionary = [NSDictionary dictionaryWithObject: AUTORELEASE([[NSString alloc] initWithData: aRequest->name  encoding: NSASCIIStringEncoding])
+		  aDictionary = [NSDictionary dictionaryWithObject: AUTORELEASE([[NSString alloc] initWithData: [aRequest name] encoding: NSASCIIStringEncoding])
 					      forKey: @"Name"];
 		  POST_NOTIFICATION(PantomimeDNSResolutionFailed, self, aDictionary);
 

@@ -2,7 +2,7 @@
 **  CWPOP3Folder.m
 **
 **  Copyright (c) 2001-2006 Ludovic Marcotte
-**  Copyright (C) 2014-2020 Riccardo Mottola
+**  Copyright (C) 2014-2022 Riccardo Mottola
 **
 **  Author: Ludovic Marcotte <ludovic@Sophos.ca>
 **          Riccardo Mottola <rm@gnu.org>
@@ -148,7 +148,7 @@
 {
   NSUInteger count;
 
-  count = [self count];
+  count = [self countVisible];
 
   // We mark it as deleted if we need to
   if (!_leave_on_server)
@@ -190,13 +190,13 @@
 {
   NSUInteger i, count;
 
-  count = [self count];
+  count = [self countVisible];
   
   for (i = count; i > 0; i--)
     {
       NSDate *aDate;
       
-      aDate = [(CWPOP3CacheManager *)_cacheManager dateForUID: [[allMessages objectAtIndex: i-1] UID]];
+      aDate = [(CWPOP3CacheManager *)_cacheManager dateForUID: [[_allMessages objectAtIndex: i-1] UID]];
       
       if (aDate)
 	{

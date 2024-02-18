@@ -94,6 +94,7 @@ ssize_t safe_recv(int fd, void *buf, size_t count, int flags);
 
 NSData *read_data_memory(unsigned char *m, uint16_t *count);
 
+NSData *read_data(unsigned char *m, uint16_t *count);
 /*!
   @function read_string_memory
   @discussion This function is used to read a string from <i>m</i>

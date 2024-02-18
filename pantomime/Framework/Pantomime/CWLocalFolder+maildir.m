@@ -2,7 +2,7 @@
 **  CWLocalFolder+maildir.m
 **
 **  Copyright (c) 2004-2007 Ludovic Marcotte
-**  Copyright (C) 2017-2020 Riccardo Mottola
+**  Copyright (C) 2017-2022 Riccardo Mottola
 **
 **  Author: Ludovic Marcotte <ludovic@Sophos.ca>
 **          Riccardo Mottola <rm@gnu.org>
@@ -50,14 +50,14 @@
   unsigned int msn;
   
   aMutableArray = AUTORELEASE([[NSMutableArray alloc] init]);
-  count = [allMessages count];
+  count = [_allMessages count];
 
   // We assume that our write operation was successful and we initialize our msn to 1
   msn = 1;
   
   for (i = 0; i < count; i++)
     {
-      aMessage = [allMessages objectAtIndex: i];
+      aMessage = [_allMessages objectAtIndex: i];
       
       theFlags = [aMessage flags];
       
@@ -105,7 +105,7 @@
     
   // We sync our cache
   if (_cacheManager) [_cacheManager expunge];
-  [allMessages removeObjectsInArray: aMutableArray];
+  [_allMessages removeObjectsInArray: aMutableArray];
   
 #warning also return when invoking the delegate
   POST_NOTIFICATION(PantomimeFolderExpungeCompleted, self, nil);

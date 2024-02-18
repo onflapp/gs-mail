@@ -202,8 +202,6 @@ void socket_callback(CFSocketRef s, CFSocketCallBackType type, CFDataRef address
       _rbuf = [[NSMutableData alloc] init];
       _wbuf = [[NSMutableData alloc] init];
 
-      _rbuf_last_pos = 0;
-
       _runLoopModes = [[NSMutableArray alloc] initWithObjects: NSDefaultRunLoopMode, nil];
       _connectionTimeout = _readTimeout = _writeTimeout = DEFAULT_TIMEOUT;
       _counter = _lastCommand = 0;
@@ -464,54 +462,6 @@ void socket_callback(CFSocketRef s, CFSocketCallBackType type, CFDataRef address
   [self subclassResponsibility: _cmd];
 }
 
-- (void) logClientRequest:(NSData*) data {
-  NSLog(@"C:[%@]", [data asciiString]);
-}
-
-- (void) logServerResponse:(NSData*) data 
-{
-  NSLog(@"S:[%@]", [data asciiString]);
-}
-
-//
-//
-//
-- (NSData *) nextDataLine
-{
-  char *start = NULL;
-  char *end = NULL;
-  NSUInteger count = 0;
-  NSUInteger start_pos = 0;
-
-  start = (char *)[_rbuf bytes];
-  start += _rbuf_last_pos;
-  end = start;
-
-  start_pos = _rbuf_last_pos;
-  count = [_rbuf length];
-
-  for (; _rbuf_last_pos < count; _rbuf_last_pos++)
-    {
-      if (*end == '\n' && *(end-1) == '\r')
-	{
-          NSUInteger l = _rbuf_last_pos - start_pos - 1;
-	  NSData *aData = [NSData dataWithBytes:start length: (l)];
-          _rbuf_last_pos++;
-          if (_rbuf_last_pos == count) {
-            NSLog(@"time to reset??");  
-            [_rbuf setLength:0];
-            _rbuf_last_pos = 0;
-          }
-	  return aData;
-	}
-
-      end++;
-    }
-
-  /* rest the last possition so that we can try again */
-  _rbuf_last_pos = start_pos;
-  return nil;
-}
 
 //
 //
@@ -526,7 +476,6 @@ void socket_callback(CFSocketRef s, CFSocketCallBackType type, CFDataRef address
       NSData *aData;
 
       aData = [[NSData alloc] initWithBytes: buf  length: (NSUInteger)count];
-      NSLog(@"BUFF:[%@]", [aData asciiString]);
 
       if (_delegate && [_delegate respondsToSelector: @selector(service:receivedData:)])
 	{
@@ -648,7 +597,6 @@ void socket_callback(CFSocketRef s, CFSocketCallBackType type, CFDataRef address
 
       [_wbuf appendData: theData];
 
-      [self logClientRequest:theData];
       //
       // Let's not try to enable the write callback if we are not connected
       // There's no reason to try to enable the write callback if we

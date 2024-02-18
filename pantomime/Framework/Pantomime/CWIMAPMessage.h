@@ -36,6 +36,10 @@
 */
 @interface CWIMAPMessage : CWMessage <NSCoding>
 {
+  //associated cache record
+  @public
+    cache_record _cache_record;
+
   @private
     BOOL _headers_were_prefetched;
     NSUInteger _UID;

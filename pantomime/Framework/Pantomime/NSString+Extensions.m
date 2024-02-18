@@ -813,11 +813,11 @@
       
       if (c == theTarget)
 	{
-	  [aMutableString appendFormat: @"%c", theReplacement];
+	  [aMutableString appendFormat: @"%C", theReplacement];
 	}
       else
 	{
-	  [aMutableString appendFormat: @"%c", c];
+	  [aMutableString appendFormat: @"%C", c];
 	}
     }
 

@@ -23,6 +23,7 @@
 #define _Pantomime_H_CWIMAPFolder
 
 #include <Pantomime/CWFolder.h>
+#include <Pantomime/CWIMAPMessage.h>
 
 #import <Foundation/NSArray.h>
 #import <Foundation/NSData.h>
@@ -171,6 +172,7 @@ extern NSString* PantomimeMessageStoreFailed;
 */
 - (void) setSelected: (BOOL) theBOOL;
 
+- (CWIMAPMessage *) messageForMessageNumber: (unsigned int) theMSN;
 @end
 
 #endif // _Pantomime_H_CWIMAPFolder

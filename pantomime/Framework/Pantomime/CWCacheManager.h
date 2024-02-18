@@ -39,7 +39,7 @@
 //
 //
 typedef struct {
-  uint32_t date;
+  unsigned int date;
   unsigned int flags;
   long position;   // For mbox based cache files
   unsigned int size;
@@ -86,7 +86,7 @@ typedef struct {
   @protected
     NSMutableArray *_cache;
     NSString *_path;
-    uint32_t _count;
+    NSUInteger _count;
     int _fd;
 }
 

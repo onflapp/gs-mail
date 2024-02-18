@@ -124,7 +124,6 @@
 - (id) initWithWindowNibName: (NSString *) windowNibName
 {  
   NSDictionary *allAccounts;
-  NSToolbar *aToolbar;
   
   allAccounts = [Utilities allEnabledAccounts];
 

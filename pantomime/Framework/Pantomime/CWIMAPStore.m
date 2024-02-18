@@ -2,7 +2,7 @@
 **  CWIMAPStore.m
 **
 **  Copyright (c) 2001-2007 Ludovic Marcotte
-**  Copyright (C) 2016-2020 Riccardo Mottola
+**  Copyright (C) 2016-2022 Riccardo Mottola
 **
 **  Author: Ludovic Marcotte <ludovic@Sophos.ca>
 **          Riccardo Mottola <rm@gnu.org>
@@ -161,7 +161,7 @@ static inline int has_literal(char *buf, unsigned c)
 - (NSString *) _folderNameFromString: (NSString *) theString;
 - (void) _parseFlags: (NSString *) aString
              message: (CWIMAPMessage *) theMessage
-	      record: (cache_record *) theRecord;
+              record: (cache_record *) theRecord;
 - (void) _renameFolder;
 - (NSArray *) _uniqueIdentifiersFromData: (NSData *) theData;
 - (void) _parseAUTHENTICATE_CRAM_MD5;
@@ -280,20 +280,15 @@ static inline int has_literal(char *buf, unsigned c)
 
   if (![_rbuf length]) return;
 
-  while ((aData = [self nextDataLine]))
+  while ((aData = split_lines(_rbuf)))
     {
       //NSLog(@"aLine = |%@|", [aData asciiString]);
-      [self logServerResponse:aData];
       buf = (char *)[aData bytes];
       count = [aData length];
-      if (count == 0) {
-        NSLog(@"empty data???");
-      }
 
       // If we are reading a literal, do so.
       if (_currentQueueObject && _currentQueueObject->literal)
 	{
-          NSLog(@"1: append data");
 	  _currentQueueObject->literal -= (count+2);
 	  //NSLog(@"literal = %d, count = %d", _currentQueueObject->literal, count);
 
@@ -348,7 +343,7 @@ static inline int has_literal(char *buf, unsigned c)
 		  // end of our literal response and we need to call
 		  // [super updateRead] to get more bytes from the socket
 		  // in order to read the rest (")" or " UID 123)" for example).
-		  while (!(aData = [self nextDataLine]))
+		  while (!(aData = split_lines(_rbuf)))
 		    {
 		      //SLog(@"NOTHING TO READ! WAITING...");
 		      [super updateRead];
@@ -380,7 +375,6 @@ static inline int has_literal(char *buf, unsigned c)
 	}
       else 
 	{
-          NSLog(@"2: append data");
 	  //NSLog(@"aLine = |%@|", [aData asciiString]);
 	  [_responsesFromServer addObject: aData];
 
@@ -1044,7 +1038,7 @@ static inline int has_literal(char *buf, unsigned c)
       _currentQueueObject = aQueueObject;
     }
      
-  //NSLog(@"Sending |%@|", _currentQueueObject->arguments);
+  NSLog(@"Sending %@ |%@|", [_currentQueueObject->tag asciiString], _currentQueueObject->arguments);
   _lastCommand = _currentQueueObject->command;
 
   [self writeData: _currentQueueObject->tag];
@@ -1370,7 +1364,7 @@ static inline int has_literal(char *buf, unsigned c)
 //
 - (void) _parseFlags: (NSString *) theString
 	     message: (CWIMAPMessage *) theMessage
-	      record: (cache_record *) theRecord
+              record: (cache_record *) theRecord
 {
   CWFlags *theFlags;
   NSRange aRange;
@@ -1713,16 +1707,16 @@ static inline int has_literal(char *buf, unsigned c)
 
   if (_currentQueueObject && _currentQueueObject->command != IMAP_SELECT &&
       _selectedFolder && 
-      n > [_selectedFolder->allMessages count])
+      n > [[_selectedFolder messages] count])
     {
       NSUInteger uid;
       
       uid = 0;
       
       // We prefetch the new messages from the last UID+1
-      if ([_selectedFolder->allMessages lastObject])
+      if ([[_selectedFolder messages] lastObject])
 	{
-	  uid = [[_selectedFolder->allMessages lastObject] UID];
+	  uid = [[[_selectedFolder messages] lastObject] UID];
 	} 
 
       [self sendCommand: IMAP_UID_FETCH_HEADER_FIELDS  info: nil  arguments: @"UID FETCH %u:* (FLAGS RFC822.SIZE BODY.PEEK[HEADER.FIELDS (From To Cc Subject Date Message-ID References In-Reply-To)])", (uid+1)];
@@ -1757,9 +1751,9 @@ static inline int has_literal(char *buf, unsigned c)
   // we have so far. It should be safe since the view hasn't even
   // had the chance to display them.
   //
-  if (msn > [_selectedFolder->allMessages count]) return;
+  if (msn > [[_selectedFolder messages] count]) return;
 
-  aMessage = [_selectedFolder->allMessages objectAtIndex: (msn-1)];
+  aMessage = [[_selectedFolder messages] objectAtIndex: (msn-1)];
   RETAIN(aMessage);
   
   // We do NOT use  [_selectedFolder removeMessage: aMessage] since it'll
@@ -1770,7 +1764,7 @@ static inline int has_literal(char *buf, unsigned c)
   // * We sent an EXPUNGE command - we'll do the threading of the
   //   messages in _parseOK:
   //
-  [_selectedFolder->allMessages removeObject: aMessage];
+  [[_selectedFolder messages] removeObject: aMessage];
   [_selectedFolder updateCache];
   
   // We remove its entry in our cache
@@ -1780,9 +1774,9 @@ static inline int has_literal(char *buf, unsigned c)
     }
   
   // We update all MSNs starting from the message that has been expunged.
-  for (i = (msn-1); i < [_selectedFolder->allMessages count]; i++)
+  for (i = (msn-1); i < [[_selectedFolder messages] count]; i++)
     {
-      [[_selectedFolder->allMessages objectAtIndex: i] setMessageNumber: (i+1)];
+      [[[_selectedFolder messages] objectAtIndex: i] setMessageNumber: (i+1)];
     }
   
   //
@@ -1897,7 +1891,6 @@ static inline int has_literal(char *buf, unsigned c)
 
   BOOL done, seen_fetch, must_flush_record;
   NSUInteger i, j, count, len;
-  cache_record r;
   
   //
   // The folder might have been closed so we must not try to
@@ -1984,17 +1977,15 @@ static inline int has_literal(char *buf, unsigned c)
 	  //NSLog(@"msn = %d", msn);
 
 	  //
-	  // If the MSN is > then the folder's count, that means it's
-	  // a new message.
-	  //
-	  // We can safely assume this since what we have in _selectedFolder->allMessages
-	  // is really the messages in our IMAP folder. That is true since we
-	  // synchronized our cache when opening the folder, in IMAPFolder: -prefetch.
-	  //
-	  if (msn > [_selectedFolder->allMessages count])
+	  // carefull! we should not assume any order
+          // yahoo IMAP sends messages in random order
+
+          aMessage = [_selectedFolder messageForMessageNumber:msn];
+          if (aMessage == nil)
 	    {
 	      //NSLog(@"============ NEW MESSAGE ======================");
 	      aMessage = [[CWIMAPMessage alloc] init];
+              CLEAR_CACHE_RECORD(aMessage->_cache_record);
 	      
 	      // We set some initial properties to our message;
 	      [aMessage setInitialized: NO];
@@ -2002,25 +1993,10 @@ static inline int has_literal(char *buf, unsigned c)
 	      [aMessage setMessageNumber: msn];
 	      [_selectedFolder appendMessage: aMessage];
 	      
-	      // We add the new message to our cache.
-	      if ([_selectedFolder cacheManager])
-		{
-		  if (must_flush_record)
-		    {
-		      [(CWIMAPCacheManager *)[_selectedFolder cacheManager] writeRecord: &r  message: aMessage];
-		    }
-		  
-		  CLEAR_CACHE_RECORD(r);
-		  must_flush_record = YES;
-
-		  //[[_selectedFolder cacheManager] addObject: aMessage];
-		}
-	      
 	      RELEASE(aMessage);
 	    }
 	  else
 	    {
-	      aMessage = [_selectedFolder->allMessages objectAtIndex: (msn-1)];
 	      [aMessage setMessageNumber: msn];
 	      [aMessage setFolder: _selectedFolder];
 	    }
@@ -2045,7 +2021,7 @@ static inline int has_literal(char *buf, unsigned c)
 	  if ([aMessage UID] == 0)
 	    {
 	      [aMessage setUID: uid];
-	      r.imap_uid = uid;
+              aMessage->_cache_record.imap_uid = uid;
 	    }
 
 	  j = [aScanner scanLocation];
@@ -2060,7 +2036,7 @@ static inline int has_literal(char *buf, unsigned c)
 	  //NSLog(@"Flags = |%@|", [aMutableString substringWithRange: NSMakeRange(j+2, aRange.location-j-2)]);
 	  [self _parseFlags: [aMutableString substringWithRange: NSMakeRange(j+2, aRange.location-j-2)]
 		message: aMessage
-		record: &r];
+                record: &aMessage->_cache_record];
 
 	  j = aRange.location + 1;
 	  [aScanner setScanLocation: j];
@@ -2075,7 +2051,7 @@ static inline int has_literal(char *buf, unsigned c)
 	  [aScanner scanUnsignedInt: &size];
 	  //NSLog(@"size = %u", size);
 	  [aMessage setSize: size];
-	  r.size = size;
+          aMessage->_cache_record.size = size;
 
 	  j = [aScanner scanLocation];
 	}
@@ -2104,8 +2080,10 @@ static inline int has_literal(char *buf, unsigned c)
       //
       else if ([aWord caseInsensitiveCompare: @"BODY[HEADER.FIELDS"] == NSOrderedSame)
 	{
+          [aMessage _releaseRecordCache];
 	  [[_currentQueueObject->info objectForKey: @"NSData"] replaceCRLFWithLF];
-	  [aMessage setHeadersFromData: [_currentQueueObject->info objectForKey: @"NSData"]  record: &r];
+	  [aMessage setHeadersFromData: [_currentQueueObject->info objectForKey: @"NSData"]  record: &aMessage->_cache_record];
+          [aMessage _retainRecordCache];
 	}
       //
       //
@@ -2154,7 +2132,7 @@ static inline int has_literal(char *buf, unsigned c)
 
       if (done && must_flush_record)
 	{
-	  [(CWIMAPCacheManager *)[_selectedFolder cacheManager] writeRecord: &r  message: aMessage];
+	  //[(CWIMAPCacheManager *)[_selectedFolder cacheManager] writeRecord: &r  message: aMessage];
 	}
     }
  
@@ -2462,7 +2440,7 @@ static inline int has_literal(char *buf, unsigned c)
 
   aData = [_responsesFromServer lastObject];
   
-  NSLog(@"IN _parseOK: [%@]", [aData asciiString]);
+  //NSLog(@"IN _parseOK: |%@|", [aData asciiString]);
 
   switch (_lastCommand)
     {
@@ -2664,7 +2642,6 @@ static inline int has_literal(char *buf, unsigned c)
       break;
 
     default:
-      NSLog(@"IMAP unknown command %d", _lastCommand);
       break;
     }
 
@@ -2783,16 +2760,16 @@ static inline int has_literal(char *buf, unsigned c)
       //NSLog(@"Folder count (to remove UID) = %d", [_selectedFolder->allMessages count]);
       b = NO;
 
-      for (i = ([_selectedFolder->allMessages count]); i > 0; i--)
+      for (i = ([[_selectedFolder messages] count]); i > 0; i--)
 	{   
-	  aMessage = [_selectedFolder->allMessages objectAtIndex: i-1];
+	  aMessage = [[_selectedFolder messages] objectAtIndex: i-1];
 	  //aMessage = [theCache objectAtIndex: i];
       
 	  if ([aMessage folder] == nil)
 	    {
 	      [(CWIMAPCacheManager *)[_selectedFolder cacheManager] removeMessageWithUID: [aMessage UID]];
 	      //NSLog(@"Removed message |%@| UID = %d", [aMessage subject], [aMessage UID]);
-	      [_selectedFolder->allMessages removeObject: aMessage];
+	      [[_selectedFolder messages] removeObject: aMessage];
 	      b = YES;
 	    }
 	  
@@ -2849,7 +2826,7 @@ static inline int has_literal(char *buf, unsigned c)
       // Messages will be fetched starting from that UID + 1.
       //
       //NSLog(@"LAST UID IN CACHE: %u", [[_selectedFolder->allMessages lastObject] UID]);
-      [self sendCommand: IMAP_UID_FETCH_HEADER_FIELDS  info: nil  arguments: @"UID FETCH %u:* (UID FLAGS RFC822.SIZE BODY.PEEK[HEADER.FIELDS (From To Cc Subject Date Message-ID References In-Reply-To)])", ([[_selectedFolder->allMessages lastObject] UID]+1)];
+      [self sendCommand: IMAP_UID_FETCH_HEADER_FIELDS  info: nil  arguments: @"UID FETCH %u:* (UID FLAGS RFC822.SIZE BODY.PEEK[HEADER.FIELDS (From To Cc Subject Date Message-ID References In-Reply-To)])", ([[[_selectedFolder messages] lastObject] UID]+1)];
       break;
 
     default:

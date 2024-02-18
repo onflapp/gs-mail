@@ -268,8 +268,6 @@ typedef enum {ET_RDESC, ET_WDESC, ET_EDESC} RunLoopEventType;
 #endif
 {
   @protected
-    NSUInteger _rbuf_last_pos;
-
     NSMutableArray *_supportedMechanisms;
     NSMutableArray *_responsesFromServer;
     NSMutableArray *_capabilities;
@@ -493,15 +491,11 @@ typedef enum {ET_RDESC, ET_WDESC, ET_EDESC} RunLoopEventType;
 */       
 - (int) reconnect;
 
-- (void) logServerResponse:(NSData*) data;
-- (void) logClientRequest:(NSData*) data;
-
 /*!
   @method updateRead
   @discussion This method is invoked automatically when bytes are available
               to be read. You should never have to invoke this method directly.
 */
-- (NSData *) nextDataLine;
 - (void) updateRead;
 
 /*!

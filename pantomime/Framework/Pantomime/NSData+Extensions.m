@@ -2,7 +2,7 @@
 **  NSData+Extensions.m
 **
 **  Copyright (c) 2001-2007 Ludovic Marcotte
-**  Copyright (C) 2014-2019 Riccardo Mottola
+**  Copyright (C) 2014-2022 Riccardo Mottola
 **
 **  Author: Ludovic Marcotte <ludovic@Sophos.ca>
 **          Riccardo Mottola <rm@gnu.org>
@@ -35,7 +35,7 @@
 //
 // C functions and constants
 //
-int getValue(char c);
+int getValue(const unsigned char c);
 void nb64ChunkFor3Characters(char *buf, const char *inBuf, unsigned numChars);
 
 static const char basis_64[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
@@ -86,8 +86,9 @@ static const char *hexDigit = "0123456789ABCDEF";
   // Content-Transfer-Encoding: base64
   //
   // ====
-  //  
-  if ((data_len * 6 / 8 - pad) < 0)
+  //
+  // we want to test (data_len * 6 / 8 - pad) < 0 but are using unisgned values, so we reverse it
+  if ((data_len * 6 / 8) < pad)
     {
       return [NSData data];
     }
@@ -155,7 +156,7 @@ static const char *hexDigit = "0123456789ABCDEF";
 	}
     }
 
-  return AUTORELEASE([[NSData alloc] initWithBytesNoCopy: outBytes length: (outBytesPtr-outBytes)]);
+  return AUTORELEASE([[NSData alloc] initWithBytesNoCopy: outBytes length: (NSUInteger)(outBytesPtr-outBytes)]);
 }
 
 
@@ -1521,7 +1522,7 @@ static const char *hexDigit = "0123456789ABCDEF";
 //
 // C functions
 //
-int getValue(char c)
+int getValue(const unsigned char c)
 {
   if (c >= 'A' && c <= 'Z') return (c - 'A');
   if (c >= 'a' && c <= 'z') return (c - 'a' + 26);

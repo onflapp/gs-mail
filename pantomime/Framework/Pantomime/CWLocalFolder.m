@@ -2,7 +2,7 @@
 **  CWLocalFolder.m
 **
 **  Copyright (c) 2001-2007 Ludovic Marcotte
-**  Copyright (C) 2017      Riccardo Mottola
+**  Copyright (C) 2017-2022 Riccardo Mottola
 **
 **  Author: Ludovic Marcotte <ludovic@Sophos.ca>
 **          Riccardo Mottola <rm@gnu.org>
@@ -140,7 +140,7 @@
   // In this particular case, we do nothing. If we got no messages but we already
   // have invoked -parse before, that won't do any harm.
   //
-  if ([allMessages count])
+  if ([_allMessages count])
     {
       // 
       // If we are using a maildir-based mailbox, we scan the /new and /tmp directories
@@ -441,7 +441,7 @@
   [self parse_mbox: mailFile  stream: theStream  flags: theFlags  all: NO];
   
   // We get back our message
-  aMessage = [allMessages objectAtIndex: [allMessages count]-1];
+  aMessage = [_allMessages objectAtIndex: [_allMessages count]-1];
 
   // We set our flags
   if (theFlags)
@@ -577,11 +577,11 @@
   aMutableArray = [NSMutableArray array];
 
   pool = [[NSAutoreleasePool alloc] init];
-  count = [allMessages count];
+  count = [_allMessages count];
 
   for (i = 0; i < count; i++)
     {
-      aMessage = [allMessages objectAtIndex: i];
+      aMessage = [_allMessages objectAtIndex: i];
           
       //
       // We search inside the Message's content.

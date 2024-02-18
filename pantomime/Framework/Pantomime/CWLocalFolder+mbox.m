@@ -2,7 +2,7 @@
 **  CWLocalFolder+mbox.m
 **
 **  Copyright (c) 2004-2007 Ludovic Marcotte
-**  Copyright (C) 2014-2020 Riccardo Mottola, Sebastian Reitenbach
+**  Copyright (C) 2014-2022 Riccardo Mottola, Sebastian Reitenbach
 **
 **  Author: Ludovic Marcotte <ludovic@Sophos.ca>
 **          Riccardo Mottola
@@ -134,11 +134,11 @@
       return;
     }
   
-  count = [allMessages count];
+  count = [_allMessages count];
 
   for (i = 0; i < count; i++)
     {
-      aMessage = [allMessages objectAtIndex: i];
+      aMessage = [_allMessages objectAtIndex: i];
       theFlags = [aMessage flags];
 
       doneWritingHeaders = seenStatus = seenXStatus = NO;    
@@ -277,7 +277,7 @@
       // Now we re-open our folder and update the 'allMessages' ivar in the Folder superclass
       [self open_mbox];
 
-      [allMessages removeObjectsInArray: aMutableArray];
+      [_allMessages removeObjectsInArray: aMutableArray];
       //[self setMessages: [_cacheManager cache]];
     }
   
@@ -395,7 +395,7 @@
 		all: (BOOL) theBOOL
 {
   CWLocalMessage *aMessage;
-  unsigned long size;
+  NSUInteger size;
   long begin, end;
   cache_record record;
   char aLine[1024];
@@ -564,11 +564,11 @@
 	    }
 	  
 	  fseek(theStream, end, SEEK_SET);
-	  size = end-begin;
+	  size = (NSUInteger)(end-begin);
 	  
 	  // We set the properties of our message object and we add it to our folder.
-	  [aMessage setSize: (NSUInteger)size];
-	  [aMessage setMessageNumber: [allMessages count]+1];
+	  [aMessage setSize: size];
+	  [aMessage setMessageNumber: [_allMessages count]+1];
 	  [aMessage setFolder: self];
 	  [aMessage setType: _type];
 	  [self appendMessage: aMessage];
@@ -764,8 +764,7 @@
       if (strncasecmp(aLine, "From ", 5) == 0)
 	{
 	  NSData *aData;
-	  
-	  unsigned long length;
+	  size_t length;
 	  char *buf;
 	  
 	  // We always 'skip' the "From " line
@@ -780,7 +779,7 @@
 	    }
 	  
 	  // We get the length of our message
-	  length = end - begin - 1;
+	  length = (size_t)(end - begin - 1);
 	  
 	  // We allocate our buffer for the message
 	  buf = (char *)malloc(length * sizeof(char));
@@ -791,7 +790,7 @@
             {
               NSLog(@"failed to fseek() 2");
               free(buf);
-			  [aMutableArray release];
+              [aMutableArray release];
               return nil;
             }
 
@@ -799,7 +798,7 @@
             {
               NSLog(@"failed to fread()");
               free(buf);
-			  [aMutableArray release];
+              [aMutableArray release];
               return nil;
             }
 	  

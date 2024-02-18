@@ -2,6 +2,7 @@
 **  CWVirtualFolder.m
 **
 **  Copyright (c) 2003-2004 Ludovic Marcotte
+**  Copyright (C) 2022      Riccardo Mottola
 **
 **  Author: Ludovic Marcotte <ludovic@Sophos.ca>
 **
@@ -60,8 +61,8 @@
 
   [_allFolders addObject: theFolder];
 
-  aMutableArray = [[NSMutableArray alloc] initWithArray: self->allMessages];
-  [aMutableArray addObjectsFromArray: theFolder->allMessages];
+  aMutableArray = [[NSMutableArray alloc] initWithArray: self->_allMessages];
+  [aMutableArray addObjectsFromArray: [theFolder messages]];
   [super setMessages: aMutableArray];
   RELEASE(aMutableArray);
 }

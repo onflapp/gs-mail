@@ -136,12 +136,12 @@ static int currentLocalMessageVersion = 1;
 //
 // access / mutation methods
 //
-- (uint32_t) filePosition
+- (long int) filePosition
 {
   return _file_position;
 }
 
-- (void) setFilePosition: (uint32_t) theFilePosition
+- (void) setFilePosition: (long int) theFilePosition
 {
   _file_position = theFilePosition;
 }
@@ -210,7 +210,7 @@ static int currentLocalMessageVersion = 1;
 
   if (fd < 0)
     {
-      NSLog(@"Unable to get the file descriptor");
+      NSLog(@"[CWLocalMessage rawSource] Unable to get the file descriptor for %@", _mailFilename);
       return nil;
     }
   

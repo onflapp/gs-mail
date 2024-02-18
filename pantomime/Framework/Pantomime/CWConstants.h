@@ -31,7 +31,7 @@
 //
 // The current version of Pantomime.
 //
-#define PANTOMIME_VERSION @"1.3.0"
+#define PANTOMIME_VERSION @"1.4.0"
 
 //
 // Useful macros that we must define ourself on OS X.

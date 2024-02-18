@@ -67,6 +67,12 @@
   return self;
 }
 
+- (void) dealloc
+{
+  [self _releaseRecordCache];
+  [super dealloc];
+}
+
 - (id) initWithCacheRecord: (cache_record) cr
 {
   self = [super init];
@@ -94,6 +100,35 @@
                            quick: YES];
     }
   return self;
+}
+
+- (void) _releaseRecordCache
+{
+  [_cache_record.from release];
+  _cache_record.from = nil;
+  [_cache_record.in_reply_to release];
+  _cache_record.in_reply_to = nil;
+  [_cache_record.message_id release];
+  _cache_record.message_id = nil;
+  [_cache_record.references release];
+  _cache_record.references = nil;
+  [_cache_record.subject release];
+  _cache_record.subject = nil;
+  [_cache_record.to release];
+  _cache_record.to = nil;
+  [_cache_record.cc release];
+  _cache_record.cc = nil;
+}
+
+- (void) _retainRecordCache
+{
+  [_cache_record.from retain];
+  [_cache_record.in_reply_to retain];
+  [_cache_record.message_id retain];
+  [_cache_record.references retain];
+  [_cache_record.subject retain];
+  [_cache_record.to retain];
+  [_cache_record.cc retain];
 }
 
 //

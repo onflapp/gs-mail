@@ -2,7 +2,7 @@
 **  CWFolder.h
 **
 **  Copyright (c) 2001-2006 Ludovic Marcotte
-**  Copyright (C) 2013-2020 Riccardo Mottola
+**  Copyright (C) 2013-2022 Riccardo Mottola
 **
 **  Author: Ludovic Marcotte <ludovic@Sophos.ca>
 **          Riccardo Mottola
@@ -287,9 +287,6 @@ extern NSString* PantomimeFolderSearchFailed;
 */
 @interface CWFolder : NSObject 
 {
-  @public
-    NSMutableArray *allMessages;
-
   @protected
     NSMutableDictionary *_properties;
     NSString *_name;
@@ -297,6 +294,7 @@ extern NSString* PantomimeFolderSearchFailed;
     CWCacheManager *_cacheManager;
     id _store;
 
+    NSMutableArray *_allMessages;
     NSMutableArray *_allVisibleMessages;
     NSMutableArray *_allContainers;
    
@@ -365,16 +363,13 @@ extern NSString* PantomimeFolderSearchFailed;
                               flags: (CWFlags *) theFlags;
 
 /*!
-  @method allMessages
-  @discussion This method is used to obtain all visible messages
-              in the CWFolder instance. It hides messages marked
-	      as Deleted if -setShowDeleted: was invoked with
-	      NO as the parameter and the the same for messages
-	      marked as read (see -setShowRead:). Note that the
+  @method messages
+  @discussion This method is used to obtain all messages
+              in the CWFolder instance. Note that the
 	      messages MIGHT NOT been all completely initialized.
-  @result An array of all visible messages.
+  @result A mutable array of messages.
 */
-- (NSArray *) allMessages;
+- (NSMutableArray *) messages;
 
 /*!
   @method setMessages:
@@ -384,6 +379,19 @@ extern NSString* PantomimeFolderSearchFailed;
   @param theMessages The array of messages.
 */
 - (void) setMessages: (NSArray *) theMessages;
+
+/*!
+  @method visibileMessages
+  @discussion This method is used to obtain all visible messages
+              in the CWFolder instance. It hides messages marked
+	      as Deleted if -setShowDeleted: was invoked with
+	      NO as the parameter and the the same for messages
+	      marked as read (see -setShowRead:). Note that the
+	      messages MIGHT NOT been all completely initialized.
+  @result An array of all visible messages.
+*/
+- (NSArray *) visibleMessages;
+
 
 /*!
   @method messageAtIndex:
@@ -396,7 +404,7 @@ extern NSString* PantomimeFolderSearchFailed;
 - (CWMessage *) messageAtIndex: (NSUInteger) theIndex;
 
 /*!
-  @method count
+  @method countVisible
   @discussion This method is used to obtain the number of messages
               present in the folder. Hidden messages will NOT
 	      be part of the value returned. So, for example, if
@@ -406,7 +414,7 @@ extern NSString* PantomimeFolderSearchFailed;
 	      8 as the messages count.
   @result The number of messages in the folder.
 */
-- (NSUInteger) count;
+- (NSUInteger) countVisible;
 
 /*!
   @method close

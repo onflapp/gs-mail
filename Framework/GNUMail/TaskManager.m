@@ -1214,7 +1214,7 @@ static Class CWSMTP_class;
  
       aTask = [self taskForService: o];
       aFolder = [o defaultFolder];
-      count = [aFolder count];
+      count = [aFolder countVisible];
    
       // We get all messages..
       for (i = 1; i <= count; i++)
@@ -1268,7 +1268,7 @@ static Class CWSMTP_class;
 
       // If we worked on the last message in the folder, we are ready to close
       // the connection with the POP3 server.
-      if ([aMessage messageNumber] == [[aMessage folder] count])
+      if ([aMessage messageNumber] == [[aMessage folder] countVisible])
 	{
 	  [o close];
 	}
@@ -1370,7 +1370,7 @@ static Class CWSMTP_class;
        
 	      aFolder = [[aWindow windowController] folder];
 
-	      if ([aFolder->allMessages containsObject: [aTask unmodifiedMessage]])
+	      if ([[aFolder messages] containsObject: [aTask unmodifiedMessage]])
 		{
 		  CWFlags *theFlags;	
 		  theFlags = [[[aTask unmodifiedMessage] flags] copy];
@@ -1577,7 +1577,7 @@ static Class CWSMTP_class;
 	{
 	  aStoreName = @"GNUMAIL_LOCAL_STORE";
 	  aUsername = NSUserName();
-	  nbOfMessages = [(CWLocalFolder*)aFolder count];
+	  nbOfMessages = [(CWLocalFolder*)aFolder countVisible];
 	  nbOfUnreadMessages = [aFolder numberOfUnreadMessages];
 	}      
 
@@ -2741,8 +2741,8 @@ static Class CWSMTP_class;
 
 	  aSelectedMessage = [(MailWindowController *)[aWindow windowController] selectedMessage];
 
-	  allMessages = [aFolder allMessages];
-	  count = [aFolder count];
+	  allMessages = [aFolder visibleMessages];
+	  count = [aFolder countVisible];
 	  
 	  for (j = 0; j < count; j++)
 	    {

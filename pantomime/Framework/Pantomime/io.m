@@ -154,6 +154,21 @@ NSData *read_data_memory(unsigned char *m, uint16_t *count)
   return [NSData dataWithBytesNoCopy: m  length: r freeWhenDone:NO];  
 }
 
+//
+//
+//
+NSData *read_data(unsigned char *m, uint16_t *count)
+{
+  uint16_t c0, c1, r;
+  
+  c0 = *m;
+  c1 = *(m+1);
+  
+  *count = r = (c0<<8)|c1;
+  m += 2;
+  
+  return [NSData dataWithBytes: m  length: r];  
+}
 
 //
 //
