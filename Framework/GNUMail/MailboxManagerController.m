@@ -1423,9 +1423,7 @@ static MailboxManagerController *singleInstance = nil;
       // For an IMAP store, we remove all children of our root node
       aFolderNode = [self storeFolderNodeForName: [Utilities accountNameForServerName: theName  username: theUsername]];
 
-#ifndef MACOSX
       [aFolderNode setChildren: nil];
-#endif
       [outlineView collapseItem: aFolderNode];
       
       row = [outlineView rowForItem: aFolderNode];

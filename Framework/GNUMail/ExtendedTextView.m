@@ -273,10 +273,6 @@ static int imageCounter = 0;
   
   [aTextAttachment setAttachmentCell: cell];
   
-  // Cocoa bug
-#ifdef MACOSX
-  [cell setAttachment: aTextAttachment];
-#endif
   [cell setImage: [aFileWrapper icon]];
   RELEASE(cell);
   
@@ -327,10 +323,6 @@ static int imageCounter = 0;
   
   [aTextAttachment setAttachmentCell: cell];
   
-  // Cocoa bug
-#ifdef MACOSX
-  [cell setAttachment: aTextAttachment];
-#endif
   [cell setImage: [aFileWrapper icon]];
   RELEASE(cell);
   
@@ -379,11 +371,7 @@ static int imageCounter = 0;
 	  // Find the rectangle(s) associated to the link
 	  // NB: there may be multiple rects if the link uses many lines
 	  rects = [[self layoutManager] rectArrayForCharacterRange: attrsRange
-#ifdef MACOSX
-					withinSelectedCharacterRange: NSMakeRange(NSNotFound, 0)
-#else
 					withinSelectedCharacterRange: attrsRange
-#endif
 					inTextContainer: [self textContainer]
 					rectCount: &rectCount];
 	  

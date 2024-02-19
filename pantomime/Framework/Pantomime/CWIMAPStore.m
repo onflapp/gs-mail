@@ -2063,11 +2063,15 @@ static inline int has_literal(char *buf, unsigned c)
       // 000b UID FETCH 3071053:3071053 BODY.PEEK[HEADER.FIELDS.NOT (From To Cc Subject Date Message-ID References In-Reply-To MIME-Version)]
       // * 1 FETCH (UID 3071053 BODY[HEADER.FIELDS ("From" "To" "Cc" "Subject" "Date" "Message-ID" "References" "In-Reply-To" "MIME-Version")] {1030}
       //
-      else if ([aWord caseInsensitiveCompare: @"BODY[HEADER.FIELDS.NOT"] == NSOrderedSame ||
+
+      //else if ([aWord caseInsensitiveCompare: @"BODY[HEADER.FIELDS.NOT"] == NSOrderedSame ||
+      //get all headers
+      else if ([aWord caseInsensitiveCompare: @"BODY[HEADER]"] == NSOrderedSame ||
 	       _lastCommand == IMAP_UID_FETCH_HEADER_FIELDS_NOT)
 	{
 	  [[_currentQueueObject->info objectForKey: @"NSData"] replaceCRLFWithLF];
-	  [aMessage addHeadersFromData:  [_currentQueueObject->info objectForKey: @"NSData"] record: NULL];
+	  NSData *buff = [_currentQueueObject->info objectForKey: @"NSData"];
+	  [aMessage addHeadersFromData: buff record: NULL];
 	  break;
 	}
       //
@@ -2082,7 +2086,8 @@ static inline int has_literal(char *buf, unsigned c)
 	{
           [aMessage _releaseRecordCache];
 	  [[_currentQueueObject->info objectForKey: @"NSData"] replaceCRLFWithLF];
-	  [aMessage setHeadersFromData: [_currentQueueObject->info objectForKey: @"NSData"]  record: &aMessage->_cache_record];
+	  NSData *buff = [_currentQueueObject->info objectForKey: @"NSData"];
+	  [aMessage setHeadersFromData: buff  record: &aMessage->_cache_record];
           [aMessage _retainRecordCache];
 	}
       //
@@ -2122,6 +2127,7 @@ static inline int has_literal(char *buf, unsigned c)
 	{
 	  [[_currentQueueObject->info objectForKey: @"NSData"] replaceCRLFWithLF];
 	  [aMessage setRawSource: [_currentQueueObject->info objectForKey: @"NSData"]];
+
 	  POST_NOTIFICATION(PantomimeMessageFetchCompleted, self, [NSDictionary dictionaryWithObject: aMessage  forKey: @"Message"]);
 	  PERFORM_SELECTOR_2(_delegate, @selector(messageFetchCompleted:), PantomimeMessageFetchCompleted, aMessage, @"Message");
 	  break;

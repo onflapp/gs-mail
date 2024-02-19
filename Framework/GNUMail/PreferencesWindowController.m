@@ -58,9 +58,7 @@ static PreferencesWindowController *singleInstance = nil;
   allPreferences = [NSDictionary dictionaryWithDictionary: [[NSUserDefaults standardUserDefaults] dictionaryRepresentation]];
  
   // FIXME - This cause a segfault on OS X when reloading a 2nd time the preferences panel
-#ifndef MACOSX
   [[NSUserDefaults standardUserDefaults] removeVolatileDomainForName: @"PREFERENCES"];
-#endif
   [[NSUserDefaults standardUserDefaults] setVolatileDomain: allPreferences  forName: @"PREFERENCES"];
 
   // We set our window title
@@ -222,32 +220,6 @@ static PreferencesWindowController *singleInstance = nil;
 
   if ([box contentView] != [aModule view])
     {
-#ifdef MACOSX
-      NSRect aFrame;
-      float delta;
-      NSWindow *win = [self window];
-
-      // Compute the height delta between the current module view and the new module view
-      delta = [[aModule view] frame].size.height - [[box contentView] frame].size.height;
-
-      [box setContentView: nil];
-
-      // Resize the box
-      aFrame = [box frame];
-      aFrame.origin.y -= delta;
-      aFrame.size.height += delta;
-
-      [box setFrame: aFrame];
-
-      // Resize the window
-      aFrame = [win contentRectForFrameRect: [win frame]];
-
-      aFrame.origin.y -= delta;
-      aFrame.size.height += delta;
-
-      aFrame = [win frameRectForContentRect: aFrame];
-      [win setFrame: aFrame  display: YES  animate: YES];
-#endif      
       [box setContentView: [aModule view]];
       [box setTitle: [aModule name]];
     }
@@ -319,15 +291,7 @@ static PreferencesWindowController *singleInstance = nil;
 	  
 	  [aButtonCell setTag: column];
 	  [aButtonCell setTitle: [aModule name]];
-#ifdef MACOSX
-	  [aButtonCell setFont: [NSFont systemFontOfSize: 10]];
-          [aButtonCell setButtonType: NSOnOffButton];
-          [aButtonCell setBezelStyle: 0]; // not documented but I assume it means None :)
-          [aButtonCell setBordered: NO];
-          [aButtonCell setGradientType: NSGradientNone];
-#else
 	  [aButtonCell setFont: [NSFont systemFontOfSize: 8]];
-#endif
 	  [aButtonCell setImage: [aModule image]];
 	}
     }
@@ -422,11 +386,7 @@ static PreferencesWindowController *singleInstance = nil;
   aButtonCell = [matrix cellAtRow: 0  column: theIndex];
   [aButtonCell setTag: theIndex];
   [aButtonCell setTitle: [aModule name]];
-#ifdef MACOSX
-  [aButtonCell setFont: [NSFont systemFontOfSize: 10]];
-#else
   [aButtonCell setFont: [NSFont systemFontOfSize: 8]];
-#endif
   [aButtonCell setImage: [aModule image]];
 }
 

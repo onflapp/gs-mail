@@ -239,11 +239,9 @@ static NSTableView *_sharedDropDownTableView = nil;
       visibleTableHeight = numVisibleTableRows * ([_sharedDropDownTableView rowHeight] +
 						  [_sharedDropDownTableView intercellSpacing].height);
 
-#ifndef MACOSX
       // We set the table column min/max width.
       [[[_sharedDropDownTableView tableColumns] objectAtIndex: 0] setMinWidth: [self frame].size.width];
       [[[_sharedDropDownTableView tableColumns] objectAtIndex: 0] setMaxWidth: [self frame].size.width];
-#endif
 
       dropDownSize = [NSScrollView frameSizeForContentSize:NSMakeSize(0, visibleTableHeight)
 				   hasHorizontalScroller:NO
@@ -257,11 +255,7 @@ static NSTableView *_sharedDropDownTableView = nil;
 
       [_sharedDropDown setFrame:NSMakeRect(dropDownTopLeft.x,
 					   
-#ifdef MACOSX
-					   dropDownTopLeft.y - dropDownSize.height,
-#else
 					   dropDownTopLeft.y - dropDownSize.height - [self frame].size.height,
-#endif
 					   dropDownSize.width,
 					   dropDownSize.height)
 		       display: YES];
@@ -385,9 +379,7 @@ static NSTableView *_sharedDropDownTableView = nil;
     }
   
   // LM
-#ifndef MACOSX
   [[self window] makeFirstResponder: self];
-#endif
 }
 
 - (void)moveUp:(id)sender
@@ -403,9 +395,7 @@ static NSTableView *_sharedDropDownTableView = nil;
       _textViewDoCommandBySelectorResponse = YES;
     }
 
-#ifndef MACOSX
   [[self window] makeFirstResponder: self];
-#endif
 }
 
 - (void)deleteBackward:(id)sender

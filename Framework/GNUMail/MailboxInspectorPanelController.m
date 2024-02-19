@@ -22,9 +22,7 @@
 */
 #import "MailboxInspectorPanelController.h"
 
-#ifndef MACOSX
 #import "MailboxInspectorPanel.h"
-#endif
 
 #import "ThreadArcsCell.h"
 
@@ -39,9 +37,6 @@ static MailboxInspectorPanelController *singleInstance = nil;
 
 - (id) initWithWindowNibName: (NSString *) windowNibName
 {
-#ifdef MACOSX
-  self = [super initWithWindowNibName: windowNibName];
-#else
   MailboxInspectorPanel *aPanel;
   
   aPanel = [[MailboxInspectorPanel alloc] initWithContentRect: NSMakeRect(200,200,250,500)
@@ -63,7 +58,6 @@ static MailboxInspectorPanelController *singleInstance = nil;
 
   box = aPanel->box;
   RELEASE(aPanel);
-#endif
 
   _cell = [[ThreadArcsCell alloc] init];
   [_cell setUsesInspector: YES];

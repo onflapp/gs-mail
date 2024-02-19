@@ -55,13 +55,8 @@
   [attributes setObject: [NSColor redColor]
 	      forKey: NSForegroundColorAttributeName];
   
-#ifdef MACOSX
-  [attributes setObject: [NSFont systemFontOfSize: 10]
-	      forKey: NSFontAttributeName];
-#else
   [attributes setObject: [NSFont systemFontOfSize: 0]
 	      forKey: NSFontAttributeName];
-#endif
 
   _attributedString = [[NSAttributedString alloc] initWithString: aString
 						  attributes: attributes];

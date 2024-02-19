@@ -58,23 +58,14 @@ void draw_value(int value, NSSize imageSize)
   int image_width, pad;
   
   attrs = [[NSMutableDictionary alloc] init];
-#ifdef MACOSX
-  [attrs setObject: [NSFont fontWithName: @"Helvetica"  size: imageSize.width/4]  forKey: NSFontAttributeName];
-#else
   [attrs setObject: [NSFont boldSystemFontOfSize: 0]  forKey: NSFontAttributeName];
-#endif
   [attrs setObject: [NSColor blackColor]  forKey: NSForegroundColorAttributeName];
   
   aString = [NSString stringWithFormat: @"%d", value];
   disc_size = [aString sizeWithAttributes: attrs];
   
-#ifdef MACOSX
-  image_width = imageSize.width;
-  pad = image_width / 8;
-#else
   image_width = 64;
   pad = 8;
-#endif
   disc_size.height += pad;
   disc_size.width += pad;
   disc_size.width = (disc_size.width < disc_size.height ? disc_size.height : disc_size.width);

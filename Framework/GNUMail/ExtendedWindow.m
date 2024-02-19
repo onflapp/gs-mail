@@ -29,37 +29,6 @@
 //
 @implementation ExtendedWindow
 
-#ifdef MACOSX
-- (NSDragOperation) draggingUpdated: (id<NSDraggingInfo>)sender
-{
-  NSWindow *aWindow;
-  
-  aWindow = [sender draggingDestinationWindow];
-  
-  if ([[aWindow windowController] isKindOfClass: [MailWindowController class]])
-    {
-      NSPoint aPoint;
-      NSRect aRect;
-      int state;
-      
-      state = [[[aWindow drawers] lastObject] state];
-      aPoint = [sender draggingLocation];
-      aRect = [aWindow frame];
-      
-      if (aPoint.x < 5 && state == NSDrawerClosedState)
-        {
-          [[[aWindow drawers] lastObject] openOnEdge: NSMinXEdge];
-        }
-      else if (aPoint.x > aRect.size.width-5 && state == NSDrawerClosedState)
-        {
-          [[[aWindow drawers] lastObject] openOnEdge: NSMaxXEdge];
-        }
-    }
-    
-  return NSDragOperationNone;
-}
-#endif
-
 //
 //
 //
@@ -79,9 +48,6 @@
         {
 	case '\n':
 	case '\r':
-#ifdef MACOSX
-	case 0x03:  // Enter key
-#endif
 	  if ([delegate isKindOfClass: [MailWindowController class]])
 	    {
 	      [(MailWindowController *)delegate doubleClickedOnDataView: delegate];

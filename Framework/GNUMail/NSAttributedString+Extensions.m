@@ -328,9 +328,6 @@ static inline NSUInteger levelFromString(NSString *theString, NSUInteger start, 
 	      [aTextAttachment setAttachmentCell: cell];
 	      
 	      // Cocoa bug
-#ifdef MACOSX
-	      [cell setAttachment: aTextAttachment];
-#endif
 	      [cell setImage: [aFileWrapper icon]];
 
 	      RELEASE(cell);
@@ -368,6 +365,7 @@ static inline NSUInteger levelFromString(NSString *theString, NSUInteger start, 
 	  [maStr appendAttributedString: [self attributedStringFromHeadersForMessage: aMessage
 					       showAllHeaders: NO
 					       useMailHeaderCell: NO] ];
+
 	  [maStr appendAttributedString: [self attributedStringFromContentForPart: aMessage  controller: theController]];
 	}
     }
@@ -764,6 +762,7 @@ static inline NSUInteger levelFromString(NSString *theString, NSUInteger start, 
     }
   else
     {
+      //aData = [aData decodeQuotedPrintableInHeader: NO];
       aCharset = [[thePart charset] dataUsingEncoding: NSASCIIStringEncoding];
     }
 
@@ -801,12 +800,6 @@ static inline NSUInteger levelFromString(NSString *theString, NSUInteger start, 
     {
       NSData *aData;
       
-#ifdef MACOSX
-      aData = [aString dataUsingEncoding: [NSString encodingForPart: thePart]];      
-      aAttributedString = [[NSAttributedString alloc] initWithHTML: aData
-						      documentAttributes: nil];
-      AUTORELEASE(aAttributedString);
-#else
       aData = [CWMIMEUtility plainTextContentFromPart: thePart];
       
       //NSLog(@"Data after stripping |%@|", [aData asciiString]);
@@ -827,7 +820,6 @@ static inline NSUInteger levelFromString(NSString *theString, NSUInteger start, 
       //NSLog(@"String from HTML |%@|", aString);
       aAttributedString = [NSAttributedString attributedStringWithString: aString
 					      attributes: textMessageAttributes];
-#endif
     }
   //
   // text/enriched

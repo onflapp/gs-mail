@@ -128,9 +128,6 @@ static BOOL doneInit = NO;
 {
   self = [super init];
 
-#ifdef MACOSX
-  _messageCompositions = [[NSMutableArray alloc] init];
-#endif
   return self;
 }
 
@@ -140,11 +137,6 @@ static BOOL doneInit = NO;
 //
 - (void) dealloc
 {
-#ifdef MACOSX
-  RELEASE(dock);
-  RELEASE(_messageCompositions);
-#endif  
-
   [super dealloc];
 }
 

@@ -63,10 +63,6 @@
       return;
     }
 
-#ifdef MACOSX
-  theColor = [theColor colorUsingColorSpaceName: NSCalibratedRGBColorSpace];
-#endif
-  
   aString = [NSString stringWithFormat: @"%f %f %f",
 		      [theColor redComponent],
 		      [theColor greenComponent],

@@ -39,7 +39,7 @@ NSComparisonResult sortMessagesBySequence(CWIMAPMessage *se1, CWIMAPMessage *se2
   unsigned int msn2 = [se2 messageNumber];
   if (msn1 == msn2)
     return NSOrderedSame;
-  else if (msn1 < msn2)
+  else if (msn1 > msn2)
     return NSOrderedAscending;
   else
     return NSOrderedDescending;
@@ -392,12 +392,11 @@ NSComparisonResult sortMessagesBySequence(CWIMAPMessage *se1, CWIMAPMessage *se2
   RELEASE(aMutableString);
 }
 
-- (NSMutableArray *) messages
+- (void) appendMessage: (CWMessage *) theMessage
 {
-  NSArray* newArray = [_allMessages sortedArrayUsingFunction: sortMessagesBySequence
-	                                             context: nil];
-
-  return newArray;
+  [super appendMessage: theMessage];
+  [_allMessages sortUsingFunction: sortMessagesBySequence
+	                  context: nil];
 }
 
 - (CWIMAPMessage *) messageForMessageNumber: (unsigned int) theMSN

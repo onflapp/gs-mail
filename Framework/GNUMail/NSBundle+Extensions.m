@@ -38,11 +38,6 @@
   NSBundle *aBundle;
   Class aClass;
 
-#ifdef MACOSX
-  aString = [[[NSBundle mainBundle] builtInPlugInsPath] 
-	      stringByAppendingPathComponent: [theName 
-						stringByAppendingPathExtension: @"prefs"]];
-#else
   NSArray *allPaths;
   BOOL b;
   int i;
@@ -64,7 +59,6 @@
 	  break;
 	}
     }
-#endif
 
   ADD_CONSOLE_MESSAGE(_(@"Loading preferences bundle at path %@."), aString);
   

@@ -60,10 +60,6 @@ NSString *MessagePboardType = @"MessagePboardType";
 //
 // Constants for the UI
 //
-#ifdef MACOSX
-const CGFloat TextFieldHeight = 22;
-#else
 const CGFloat TextFieldHeight = 21;
-#endif
 const CGFloat ButtonHeight = 25;
 

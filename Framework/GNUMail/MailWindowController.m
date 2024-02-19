@@ -853,14 +853,6 @@
   [Utilities showMessage: aMessage
 	     target: [aViewWindowController textView]
 	     showAllHeaders: [self showAllHeaders]];
-
-  // On MacOS X, if the mail window is not active, double-clicking on an unselected message
-  // causes the message not to draw itself in the new window that pops up.
-  // Let's force it to draw itself.
-#ifdef MACOSX
-  [[aViewWindowController textView] setNeedsDisplay: YES];
-#endif
-
 }
 
 //

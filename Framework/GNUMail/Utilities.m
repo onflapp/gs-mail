@@ -1963,13 +1963,6 @@ static NSMutableDictionary *passwordCache = nil;
 	  
 	  // Construct the launch path. If is an MacOS app wrapper, add the full path to the binary
 	  aPath = [[NSMutableString alloc] initWithString: [aMimeType dataHandlerCommand]];
-#ifdef MACOSX
-	  if ([[NSWorkspace sharedWorkspace] isFilePackageAtPath: aPath])
-	    {
-	      [aPath appendString: [NSString stringWithFormat: @"/Contents/MacOS/%@", 
-					     [[aPath stringByDeletingPathExtension] lastPathComponent]]];
-	    }
-#endif
 	  
 	  // Launch task and look for exceptions
 	  NS_DURING
@@ -2018,14 +2011,6 @@ static NSMutableDictionary *passwordCache = nil;
       
       if (!foldersToOpen || [foldersToOpen count] == 0)
 	{
-#ifdef MACOSX
-          // On OS X, we show an empty viewer window if we had no mailbox
-          // to open upon GNUMail's startup
-          if ([[GNUMail allMailWindows] count] == 0)
-            {
-              [[NSApp delegate] newViewerWindow: self];
-            }
-#endif
 	  return;
 	}
       else
@@ -2144,7 +2129,7 @@ NSString *GNUMailTemporaryDirectory()
   NSFileManager *aFileManager;
   NSString *aString;
   
-  aString = [NSString stringWithFormat: @"%@/GNUMail", NSTemporaryDirectory()];
+  aString = [NSString stringWithFormat: @"%@/Mail", NSTemporaryDirectory()];
   aFileManager = [NSFileManager defaultManager];
 
   if (![aFileManager fileExistsAtPath: aString])
@@ -2163,7 +2148,7 @@ NSString *GNUMailTemporaryDirectory()
 //
 NSString *GNUMailUserLibraryPath()
 {
-  return [NSString stringWithFormat: @"%@/GNUMail", 
+  return [NSString stringWithFormat: @"%@/Mail", 
 		   [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES)
 						       objectAtIndex: 0] ];
 }
@@ -2174,11 +2159,7 @@ NSString *GNUMailUserLibraryPath()
 //
 NSString *GNUMailVersion()
 {
-#ifdef MACOSX
-  return [[[NSBundle bundleForClass: [[NSApp delegate] class]] infoDictionary] objectForKey: @"CFBundleVersion"];
-#else
   return [[[NSBundle mainBundle] infoDictionary] objectForKey: @"ApplicationRelease"];
-#endif
 }
 
 //
@@ -2194,9 +2175,5 @@ NSString *GNUMailBaseURL()
 //
 NSString *GNUMailCopyrightInfo()
 {
-#ifdef MACOSX
-  return [[[NSBundle mainBundle] infoDictionary] objectForKey: @"NSHumanReadableCopyright"]; 
-#else
   return [[[NSBundle mainBundle] infoDictionary] objectForKey: @"Copyright"];
-#endif
 }

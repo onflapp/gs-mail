@@ -101,21 +101,8 @@ static NSFont *seenMessageFont = nil;
 {
   if (!deletedMessageFont)
     {
-#ifdef MACOSX
-      if ([[NSUserDefaults standardUserDefaults] objectForKey: @"MESSAGE_LIST_FONT_NAME"] )
-	{
-	  deletedMessageFont = [[NSFontManager sharedFontManager] convertFont: [self seenMessageFont]  toHaveTrait: NSItalicFontMask];
-	}
-      else
-	{
-	  deletedMessageFont = [[NSFontManager sharedFontManager] convertFont: [NSFont systemFontOfSize:
-											 [NSFont smallSystemFontSize]]
-								  toHaveTrait: NSItalicFontMask];
-	}
-#else
       deletedMessageFont = [[NSFontManager sharedFontManager] convertFont: [NSFont systemFontOfSize: 0]
 							      toHaveTrait: NSItalicFontMask];
-#endif
       RETAIN(deletedMessageFont);
     }
 
@@ -197,20 +184,7 @@ static NSFont *seenMessageFont = nil;
 {
   if (!recentMessageFont)
     {
-#ifdef MACOSX
-      if ([[NSUserDefaults standardUserDefaults] objectForKey: @"MESSAGE_LIST_FONT_NAME"] )
-	{
-	  recentMessageFont = [NSFont fontFromFamilyName: [[NSUserDefaults standardUserDefaults] stringForKey: @"MESSAGE_LIST_FONT_NAME"]
-				      trait: NSBoldFontMask
-				      size: [[[NSUserDefaults standardUserDefaults] objectForKey: @"MESSAGE_LIST_FONT_SIZE"] intValue]];
-	}
-      else
-	{
-	  recentMessageFont = [NSFont boldSystemFontOfSize: [NSFont smallSystemFontSize]];
-	}
-#else
       recentMessageFont = [NSFont boldSystemFontOfSize: 0];
-#endif
       RETAIN(recentMessageFont);
     }
 
@@ -225,20 +199,7 @@ static NSFont *seenMessageFont = nil;
 {
   if (!seenMessageFont)
     {
-#ifdef MACOSX
-      if ([[NSUserDefaults standardUserDefaults] objectForKey: @"MESSAGE_LIST_FONT_NAME"] )
-	{
-	  seenMessageFont = [NSFont fontFromFamilyName: [[NSUserDefaults standardUserDefaults] stringForKey: @"MESSAGE_LIST_FONT_NAME"]
-				 trait: NSUnboldFontMask
-				 size: [[[NSUserDefaults standardUserDefaults] objectForKey: @"MESSAGE_LIST_FONT_SIZE"] intValue]];
-	}
-      else
-	{
-	  seenMessageFont = [NSFont systemFontOfSize: [NSFont smallSystemFontSize]];
-	}
-#else
       seenMessageFont = [NSFont systemFontOfSize: 0];
-#endif
       RETAIN(seenMessageFont);
     }
 

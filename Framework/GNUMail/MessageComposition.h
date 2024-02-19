@@ -122,23 +122,4 @@
 
 @end
 
-#ifdef MACOSX
-@interface MessageComposition (ScriptingSupport)
-
-//
-// Object specifier
-//
-- (NSScriptObjectSpecifier *)objectSpecifier;
-
-//
-// Handlers for supported commands:
-//
-- (void) handleSendMessageScriptCommand: (NSScriptCommand *) command;
-- (void) handleShowMessageScriptCommand: (NSScriptCommand *) command;
-- (void) handleAttachScriptCommand: (NSScriptCommand *) command;
-
-@end
-
-#endif
-
 #endif // _GNUMail_H_MessageComposition

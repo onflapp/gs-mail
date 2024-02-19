@@ -27,9 +27,7 @@
 #import <AppKit/AppKit.h>
 #import <AddressBook/AddressBook.h>
 
-#ifndef MACOSX
 @class ADSinglePropertyView;
-#endif
 
 //
 //
@@ -45,9 +43,6 @@
 - (NSArray *) formattedValuesForPrefix: (NSString *) thePrefix;
 - (NSString *) formattedValue;
 - (NSString *) fullName;
-#ifdef MACOSX
-- (BOOL) compare: (ABPerson *) thePerson;
-#endif
 @end
 
 @class CWMessage;
@@ -59,16 +54,7 @@
 {
   // Outlets and ivars
   IBOutlet NSPopUpButton *preferredEmailLabelPopUp;
-#ifdef MACOSX
-  IBOutlet NSTableView *tableView;
-  IBOutlet NSBrowser *browser;
-  IBOutlet NSButton *open;
-  
-  NSMutableDictionary *allPersons;
-  NSMutableArray *allSortedKeys;
-#else
   ADSinglePropertyView *singlePropertyView;
-#endif
 
   NSMapTable *_table;
 }
@@ -94,29 +80,6 @@
 		       inGroupWithId: (NSString *) groupId;
 - (void) addSenderToAddressBook: (CWMessage *) theMessage;
 - (void) freeCache;
-
-//
-// Mac OS X-only methods
-//
-#ifdef MACOSX
-- (void) windowDidLoad;
-
-- (IBAction) doubleClicked: (id) sender;
-
-- (IBAction) selectionInBrowserHasChanged: (id) sender;
-
-- (NSInteger) browser: (NSBrowser *) sender
- numberOfRowsInColumn: (NSInteger) column;
-
-- (void) browser: (NSBrowser *) sender
- willDisplayCell: (id) cell
-	   atRow: (NSInteger) row
-          column: (NSInteger) column;
-
-- (BOOL) browser: (NSBrowser *) sender
-       selectRow: (NSInteger) row
-        inColumn: (NSInteger) column;
-#endif
 
 //
 // class methods

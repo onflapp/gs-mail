@@ -312,17 +312,9 @@
   oPanel = [NSOpenPanel openPanel];
   [oPanel setAllowsMultipleSelection:YES];
   
-#ifdef MACOSX
-  [oPanel beginSheetForDirectory: [GNUMail currentWorkingPath] file:nil types:nil
-	  modalForWindow: [self window] 
-	  modalDelegate: self
-	  didEndSelector: @selector(_openPanelDidEnd: returnCode: contextInfo:)
-	  contextInfo: nil];
-#else
   [self _openPanelDidEnd: oPanel 
 	returnCode: [oPanel runModalForDirectory: [GNUMail currentWorkingPath]  file: nil  types: nil]
 	contextInfo: nil];
-#endif
 }
 
 
@@ -742,20 +734,6 @@
 {
   if ([[self window] isDocumentEdited])
     {
-#ifdef MACOSX
-      NSBeginAlertSheet(_(@"Closing..."),
-			_(@"Cancel"),                                        // defaultButton
-			_(@"Save in Drafts"),                                // alternateButton
-			_(@"No"),                                            // otherButton
-			[self window],
-			self,                                                // delegate
-			@selector(_sheetDidEnd:returnCode:contextInfo:),     // didEndSelector
-			@selector(_sheetDidDismiss:returnCode:contextInfo:), // didDismissSelector
-			nil,                                                 // contextInfo
-		      _(@"Would you like to save this message in the Drafts folder?"));
-
-      return NO;
-#else
       int choice;
       
       choice = NSRunAlertPanel(_(@"Closing..."),
@@ -775,7 +753,6 @@
 	  // We append the message to the Drafts folder. 
 	  [[MailboxManagerController singleInstance] saveMessageInDraftsFolderForController: self];
 	}
-#endif
     }
   
   return YES;
@@ -2295,41 +2272,6 @@
       [thePart setContent: [theString dataUsingEncoding: [NSString encodingForCharset: [aCharset dataUsingEncoding: NSASCIIStringEncoding]]]];
     }
 }
-
-
-//
-// Only called under MacOS X
-//
-#ifdef MACOSX
-- (void) _sheetDidEnd: (NSWindow *) sheet
-	   returnCode: (NSInteger) returnCode
-	  contextInfo: (void *) contextInfo
-{
-  if ( returnCode == NSAlertAlternateReturn )
-    {
-      // We append the message to the Drafts folder.
-      [[MailboxManagerController singleInstance] saveMessageInDraftsFolderForController: self];
-    }
-}
-
-
-//
-// Only called under MacOS X
-//
-- (void) _sheetDidDismiss: (NSWindow *) sheet
-	       returnCode: (NSInteger) returnCode
-	      contextInfo: (void *) contextInfo
-{
-  // We cancel the closing operation
-  if (returnCode == NSAlertDefaultReturn)
-    {
-      return;
-    }
-  
-  [[self window] close];
-}
-#endif
-
 
 //
 //
