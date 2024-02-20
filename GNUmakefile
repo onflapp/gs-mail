@@ -38,7 +38,6 @@ endif
 include $(GNUSTEP_MAKEFILES)/common.make
 
 SUBPROJECTS = \
-	Framework/GNUMail \
 	Bundles/Account \
 	Bundles/Advanced \
 	Bundles/Colors \
@@ -56,7 +55,70 @@ SUBPROJECTS = \
 VERSION = 1.3.0
 PACKAGE_NAME = Mail
 APP_NAME = Mail
-Mail_OBJC_FILES = GNUMail_main.m 
+Mail_OBJC_FILES = \
+	Sources/GSProgressIndicator.m \
+	Sources/AboutPanelController.m \
+	Sources/AddressBookController.m \
+	Sources/AddressBookPanel.m \
+	Sources/ApplicationIconController.m \
+	Sources/AutoCompletingTextField.m \
+	Sources/ConsoleWindowController.m \
+	Sources/Constants.m \
+	Sources/ExtendedCell.m \
+	Sources/ExtendedFileWrapper.m \
+	Sources/ExtendedMenuItem.m \
+	Sources/ExtendedTableView.m \
+	Sources/ExtendedTextAttachmentCell.m \
+	Sources/ExtendedTextView.m \
+	Sources/ExtendedOutlineView.m \
+	Sources/ExtendedWindow.m \
+	Sources/EditWindowController.m \
+	Sources/EditWindowToolbar.m \
+	Sources/Filter.m \
+	Sources/FilterManager.m \
+	Sources/FindWindowController.m \
+	Sources/FolderNode.m \
+	Sources/FolderNodePopUpItem.m \
+	Sources/GNUMail.m \
+	Sources/GNUMail+Extensions.m \
+	Sources/GNUMail+MenuValidation.m \
+	Sources/GNUMail+Services.m \
+	Sources/ImageTextCell.m \
+	Sources/LabelWidget.m \
+	Sources/MailboxInspectorPanel.m \
+	Sources/MailboxInspectorPanelController.m \
+	Sources/MailboxManager.m \
+	Sources/MailboxManagerCache.m \
+	Sources/MailboxManagerController.m \
+	Sources/MailboxManagerToolbar.m \
+	Sources/MailHeaderCell.m \
+	Sources/MailWindowController.m \
+	Sources/MailWindowToolbar.m \
+	Sources/MessageViewWindow.m \
+	Sources/MessageViewWindowController.m \
+	Sources/MessageViewWindowToolbar.m \
+	Sources/MimeType.m \
+	Sources/MimeTypeManager.m \
+	Sources/NavigationToolbarItem.m \
+	Sources/NewMailboxPanelController.m \
+	Sources/NSAttributedString+Extensions.m \
+	Sources/NSAttributedString+TextEnriched.m \
+	Sources/NSBezierPath+Extensions.m \
+	Sources/NSBundle+Extensions.m \
+	Sources/NSColor+Extensions.m \
+	Sources/NSFont+Extensions.m \
+	Sources/NSPasteboard+Extensions.m \
+	Sources/NSUserDefaults+Extensions.m \
+	Sources/PasswordPanelController.m \
+	Sources/PreferencesWindowController.m \
+	Sources/STScriptingSupport.m \
+	Sources/Task.m \
+	Sources/TaskManager.m \
+	Sources/ThreadArcsCell.m \
+	Sources/Utilities.m \
+	Sources/WelcomePanel.m \
+  Sources/GNUMail_main.m
+
 Mail_RESOURCE_FILES = \
 	Resources/*.lproj \
 	Resources/Icons/*.tiff \
@@ -66,11 +128,11 @@ Mail_RESOURCE_FILES = \
 Mail_LANGUAGES = \
 	Resources/English
 
-Mail_LIB_DIRS = -L../$(GNUSTEP_LIBRARIES_ROOT) -LFramework/GNUMail/GNUMail.framework/Versions/Current/$(GNUSTEP_TARGET_LDIR) -LFramework/GNUMail/GNUMail.framework
-Mail_GUI_LIBS = -lGNUMail -lPantomime -lAddresses -lAddressView
+Mail_LIB_DIRS += -L../$(GNUSTEP_LIBRARIES_ROOT)
+Mail_GUI_LIBS += -lPantomime -lAddresses -lAddressView
 Mail_LOCALIZED_RESOURCE_FILES = Localizable.strings
 
-ADDITIONAL_INCLUDE_DIRS += -I./Framework/GNUMail
+ADDITIONAL_INCLUDE_DIRS += -I./Headers
 ADDITIONAL_OBJCFLAGS += -Wall -Wno-import -I/usr/kerberos/include -I/usr/local/ssl/include
 
 include $(GNUSTEP_MAKEFILES)/aggregate.make

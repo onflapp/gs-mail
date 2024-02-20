@@ -791,7 +791,7 @@ static BOOL doneInit = NO;
 
   for (i = 0; i < [allPaths count]; i++)
     {
-      aString = [NSString stringWithFormat: @"%@/GNUMail/Import.bundle", [allPaths objectAtIndex: i]];
+      aString = [NSString stringWithFormat: @"%@/Mail/Import.bundle", [allPaths objectAtIndex: i]];
       
       if ([[NSFileManager defaultManager] fileExistsAtPath: aString  isDirectory: &b] && b)
 	{
@@ -1008,7 +1008,7 @@ static BOOL doneInit = NO;
     }
 }
 
-// this method is needed due to changes in Framework/GNUMail/MessageViewWindowToolbar.m
+// this method is needed due to changes in Framework/Mail/MessageViewWindowToolbar.m
 // now using NSToolbarPrintItemIdentifier instead of the custom print method
 // needs to be changed when the MainMenu NIB can be updated to use printDocument
 // instead of printMessage, then the printMessage can just be renamed.
@@ -2768,7 +2768,7 @@ static BOOL doneInit = NO;
       // We remove any potential duplicate paths in our allPaths array.
       [allPaths removeObject: [allPaths objectAtIndex: i] inRange: NSMakeRange(i+1, [allPaths count]-i-1)];
       
-      aPath = [[allPaths objectAtIndex: i] stringByAppendingPathComponent:@"GNUMail"];
+      aPath = [[allPaths objectAtIndex: i] stringByAppendingPathComponent:@"Mail"];
       allFiles = [aFileManager directoryContentsAtPath: aPath];
       
       for (j = 0; j < [allFiles count]; j++)

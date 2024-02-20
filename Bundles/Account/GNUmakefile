@@ -22,7 +22,7 @@ include $(GNUSTEP_MAKEFILES)/common.make
 BUNDLE_NAME = Account
 BUNDLE_EXTENSION = .prefs
 
-BUNDLE_INSTALL_DIR = $(GNUSTEP_APPLICATION_SUPPORT)/GNUMail
+BUNDLE_INSTALL_DIR = $(GNUSTEP_APPLICATION_SUPPORT)/Mail
 
 Account_RESOURCE_FILES = account.tiff
 
@@ -55,9 +55,8 @@ Account_PRINCIPAL_CLASS = \
 
 ADDITIONAL_OBJCFLAGS += -Wall -Wno-import
 
-ADDITIONAL_INCLUDE_DIRS += -I../../Framework/GNUMail
-ADDITIONAL_LIB_DIRS += -L../../Framework/GNUMail/GNUMail.framework/Versions/Current/$(GNUSTEP_TARGET_LDIR)
-ADDITIONAL_GUI_LIBS += -lGNUMail -lPantomime
+ADDITIONAL_INCLUDE_DIRS += -I../../Headers
+ADDITIONAL_GUI_LIBS += -lPantomime
 
 # Under Solaris, we include SSL headers / libraries
 ifeq ($(findstring solaris, $(GNUSTEP_TARGET_OS)), solaris)

@@ -52,7 +52,7 @@
 
   for (i = 0; i < [allPaths count]; i++)
     {
-      aString = [NSString stringWithFormat: @"%@/GNUMail/%@.prefs", [allPaths objectAtIndex: i], theName];
+      aString = [NSString stringWithFormat: @"%@/Mail/%@.prefs", [allPaths objectAtIndex: i], theName];
       
       if ([[NSFileManager defaultManager] fileExistsAtPath: aString  isDirectory: &b] && b)
 	{

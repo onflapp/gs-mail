@@ -3,5 +3,6 @@ derived_src
 obj
 tags
 *.bundle
+*.prefs
 *.app
 *.o
