@@ -1342,6 +1342,10 @@ static CWRegEx *prefixSubjFwdHdrAndSuffixSubjFwdTrlRegex = nil;
 //
 - (void) addHeadersFromData: (NSData *) theHeaders  record: (cache_record *) theRecord
 {
+  [self addHeadersFromData: theHeaders record: theRecord toIgnore: nil];
+}
+- (void) addHeadersFromData: (NSData *) theHeaders  record: (cache_record *) theRecord toIgnore: (NSArray *) ignored
+{
   NSArray *allLines;
   NSData *aData;
   NSUInteger i, count;
@@ -1357,6 +1361,7 @@ static CWRegEx *prefixSubjFwdHdrAndSuffixSubjFwdTrlRegex = nil;
 
   for (i = 0; i < count; i++)
     {
+      BOOL doIgnore = NO;
       NSData *aLine = [allLines objectAtIndex: i];
 
       // We stop if we found the header separator. (\n\n) since someone could
@@ -1365,6 +1370,18 @@ static CWRegEx *prefixSubjFwdHdrAndSuffixSubjFwdTrlRegex = nil;
 	{
 	  break;
 	}
+
+      for (NSString *prefix in ignored)
+        {
+	  if ([aLine hasCaseInsensitiveCPrefix: [prefix cString]])
+            {
+              doIgnore = YES;
+              break;
+            }
+        }
+
+      if (doIgnore)
+        continue;
 
       if ([aLine hasCaseInsensitiveCPrefix: "Bcc"])
 	{

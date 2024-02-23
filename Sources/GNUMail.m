@@ -1643,18 +1643,7 @@ static BOOL doneInit = NO;
 //
 - (IBAction) showMailboxManager: (id) sender
 {
-  if ([[NSUserDefaults standardUserDefaults] integerForKey: @"PreferredViewStyle"  default: GNUMailDrawerView] == GNUMailDrawerView)
-    {
-      if ([GNUMail lastMailWindowOnTop] &&
-	  [[[GNUMail lastMailWindowOnTop] delegate] isKindOfClass: [MailWindowController class]])
-	{
-	  [[[GNUMail lastMailWindowOnTop] delegate] openOrCloseDrawer: self];
-	}
-    }
-  else
-    {
-      TOGGLE_WINDOW(MailboxManagerController);
-    }
+  TOGGLE_WINDOW(MailboxManagerController);
 }
 
 
@@ -2059,11 +2048,7 @@ static BOOL doneInit = NO;
   // We synchronize our MailboxManagerCache and we close all Stores
   [[(MailboxManagerController *)[MailboxManagerController singleInstance] cache] synchronize];
 
-  // Under GNUstep, we also close the window before releasing the singleton
-  if ([[NSUserDefaults standardUserDefaults] integerForKey: @"PreferredViewStyle"  default: GNUMailDrawerView] == GNUMailFloatingView)
-    {
-      [[[MailboxManagerController singleInstance] window] close];
-    }
+  [[[MailboxManagerController singleInstance] window] close];
 
   RELEASE([MailboxManagerController singleInstance]);
 
@@ -2438,12 +2423,10 @@ static BOOL doneInit = NO;
   // We show of MailboxManager window, if we need to.
   // Under GNUstep, we MUST do this _before_ showing any MailWindow:s.
   //
-  if ([[NSUserDefaults standardUserDefaults] integerForKey: @"PreferredViewStyle"  default: GNUMailDrawerView] == GNUMailFloatingView)
+
+  if ([[NSUserDefaults standardUserDefaults] boolForKey: @"OPEN_MAILBOXMANAGER_ON_STARTUP"])
     {
-      if ([[NSUserDefaults standardUserDefaults] boolForKey: @"OPEN_MAILBOXMANAGER_ON_STARTUP"])
-	{
-	  [self showMailboxManager: nil];
-	}
+      [self showMailboxManager: nil];
     }
     
   // We show the Console window, if we need to.

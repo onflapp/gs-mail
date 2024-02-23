@@ -1756,6 +1756,12 @@ static inline int has_literal(char *buf, unsigned c)
   aMessage = [[_selectedFolder messages] objectAtIndex: (msn-1)];
   RETAIN(aMessage);
   
+  if (msn != [aMessage messageNumber]) 
+    {
+      NSLog(@"asking to delete %d but found %d", msn, [aMessage messageNumber]);
+      return;
+    }
+
   // We do NOT use  [_selectedFolder removeMessage: aMessage] since it'll
   // thread the messages everytime we invoke it. We rather thread messages
   // if:
@@ -2071,7 +2077,7 @@ static inline int has_literal(char *buf, unsigned c)
 	{
 	  [[_currentQueueObject->info objectForKey: @"NSData"] replaceCRLFWithLF];
 	  NSData *buff = [_currentQueueObject->info objectForKey: @"NSData"];
-	  [aMessage addHeadersFromData: buff record: NULL];
+          [aMessage addHeadersFromData: buff record: NULL toIgnore: [NSArray arrayWithObjects:@"From",@"To", @"Cc", @"Subject", @"Date", @"Message-ID", @"References", @"In-Reply-To", nil]];
 	  break;
 	}
       //
@@ -2757,6 +2763,7 @@ static inline int has_literal(char *buf, unsigned c)
 	      [aMessage setMessageNumber: (i+1)];
 	    }
 	}
+      [_selectedFolder resortMessagesByMessageNumber];
       
       //
       // We purge our cache from all deleted messages and we keep the
@@ -2831,8 +2838,8 @@ static inline int has_literal(char *buf, unsigned c)
       // We obtain the last UID of our cache.
       // Messages will be fetched starting from that UID + 1.
       //
-      //NSLog(@"LAST UID IN CACHE: %u", [[_selectedFolder->allMessages lastObject] UID]);
-      [self sendCommand: IMAP_UID_FETCH_HEADER_FIELDS  info: nil  arguments: @"UID FETCH %u:* (UID FLAGS RFC822.SIZE BODY.PEEK[HEADER.FIELDS (From To Cc Subject Date Message-ID References In-Reply-To)])", ([[[_selectedFolder messages] lastObject] UID]+1)];
+      //NSLog(@"LAST UID IN CACHE: %u", [[[_selectedFolder messages] lastObject] UID]);
+      [self sendCommand: IMAP_UID_FETCH_HEADER_FIELDS  info: nil  arguments: @"UID FETCH %lu:* (UID FLAGS RFC822.SIZE BODY.PEEK[HEADER.FIELDS (From To Cc Subject Date Message-ID References In-Reply-To)])", ([[[_selectedFolder messages] lastObject] UID]+1)];
       break;
 
     default:

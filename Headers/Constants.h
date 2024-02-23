@@ -237,10 +237,7 @@ enum {
 //
 //
 enum {
-  GNUMailDrawerView = 0,
-  GNUMailFloatingView = 1,
-  GNUMail3PaneView = 2,
-  GNUMailWidescreenView = 3
+  GNUMailFloatingView = 1
 };
 
 //

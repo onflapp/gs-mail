@@ -172,6 +172,8 @@ extern NSString* PantomimeMessageStoreFailed;
 */
 - (void) setSelected: (BOOL) theBOOL;
 
+- (void) resortMessagesByMessageNumber;
+
 - (CWIMAPMessage *) messageForMessageNumber: (unsigned int) theMSN;
 @end
 

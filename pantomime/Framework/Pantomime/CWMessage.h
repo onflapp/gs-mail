@@ -554,6 +554,7 @@ extern NSString* PantomimeMessageExpunged;
   @param The additional headers, in their raw representation.
   @param theRecord The cache_record to update.
 */
+- (void) addHeadersFromData: (NSData *) theHeaders  record: (cache_record *) theRecord toIgnore: (NSArray *) ignored;
 - (void) addHeadersFromData: (NSData *) theHeaders  record: (cache_record *) theRecord;
 
 /*!

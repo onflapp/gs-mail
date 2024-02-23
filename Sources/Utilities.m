@@ -1632,6 +1632,7 @@ static NSMutableDictionary *passwordCache = nil;
       CWFlags *theFlags;
       id aDelegate;
       NSUInteger i, count;
+      BOOL HEADER_RECTANGLE = [[[NSUserDefaults standardUserDefaults] objectForKey: @"HEADER_RECTANGLE"] boolValue];
 
       if ([theMessage isKindOfClass: [CWIMAPMessage class]] && ![(CWIMAPFolder *)[theMessage folder] selected])
       	{
@@ -1672,7 +1673,7 @@ static NSMutableDictionary *passwordCache = nil;
       
       [[theTextView textStorage] insertAttributedString: [NSAttributedString attributedStringFromHeadersForMessage: theMessage
 									     showAllHeaders: headersFlag
-									     useMailHeaderCell: YES]
+									     useMailHeaderCell: HEADER_RECTANGLE]
 				 atIndex: 0];
 				 
       

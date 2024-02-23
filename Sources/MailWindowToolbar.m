@@ -107,16 +107,8 @@
       [item setPaletteLabel: _(@"Show Mailboxes")];
       [item setImage: [NSImage imageNamed: @"mailboxes_32.tiff"]];
       
-      if ([[NSUserDefaults standardUserDefaults] integerForKey: @"PreferredViewStyle"  default: GNUMailDrawerView] == GNUMailDrawerView)
-	{
-	  [item setTarget: self];
-	  [item setAction: @selector(openOrCloseDrawer:)];
-	}
-      else
-	{
-	  [item setTarget: [NSApp delegate]];
-	  [item setAction: @selector(showMailboxManager:)];
-	}
+      [item setTarget: [NSApp delegate]];
+      [item setAction: @selector(showMailboxManager:)];
     }
   else if ([itemIdentifier isEqualToString: @"compose"])
     {

@@ -285,12 +285,6 @@
   RELEASE(threadArcsCell);
   RELEASE(allMessageViewWindowControllers);
 
-  // We release our NSDrawer's extended outline view
-  if ([[NSUserDefaults standardUserDefaults] integerForKey: @"PreferredViewStyle"  default: GNUMailDrawerView] == GNUMailDrawerView)
-    {
-      RELEASE(outlineView);
-    }
-
   RELEASE(_allVisibleMessages);
 
   // We release our context menu
@@ -1858,21 +1852,12 @@
       [[(GNUMail *)[NSApp delegate] saveMenu] removeItemAtIndex: count];
     }
  
-  if ([[NSUserDefaults standardUserDefaults] integerForKey: @"PreferredViewStyle"  default: GNUMailDrawerView] == GNUMailDrawerView)
+  // If we closed the last MailWindow, we deselect all items in
+  // the Mailboxes window. We only do that under GNUstep.
+  if ([[GNUMail allMailWindows] count] == 0)
     {
-      // We finally unset the mailbox manager's current outline view
-      [[MailboxManagerController singleInstance] setCurrentOutlineView: nil];
-      [[NSUserDefaults standardUserDefaults] setInteger: [drawer edge]  forKey: @"DrawerPosition"];
-    }
-  else
-    {
-      // If we closed the last MailWindow, we deselect all items in
-      // the Mailboxes window. We only do that under GNUstep.
-      if ([[GNUMail allMailWindows] count] == 0)
-	{
-	  [[[MailboxManagerController singleInstance] outlineView] deselectAll: self];
-	  [[[MailboxManagerController singleInstance] outlineView] setNeedsDisplay: YES];
-	}
+      [[[MailboxManagerController singleInstance] outlineView] deselectAll: self];
+      [[[MailboxManagerController singleInstance] outlineView] setNeedsDisplay: YES];
     }
   
   // We remove our window from our list of opened windows
@@ -1887,99 +1872,6 @@
 {
   NSMenuItem *aMenuItem;
   NSMenu *aMenu;
-
-  if ([[NSUserDefaults standardUserDefaults] integerForKey: @"PreferredViewStyle"  default: GNUMailDrawerView] == GNUMailDrawerView)
-    {
-      //
-      // We set up our NSDrawer's contentView.
-      //
-      NSTableColumn *mailboxColumn, *messagesColumn;
-      NSScrollView *scrollView;
-      id aCell;
-      NSSize drawerSize;
-
-      mailboxColumn = [[NSTableColumn alloc] initWithIdentifier: @"Mailbox"];
-      [mailboxColumn setEditable: YES];
-      // FIXME - This is pissing me off on Cocoa.
-      [mailboxColumn setMaxWidth: 150];
-      [[mailboxColumn headerCell] setStringValue: _(@"Mailbox")];
-      
-      aCell =  [[ImageTextCell alloc] init];
-      [aCell setWraps: NO];
-      [mailboxColumn setDataCell: aCell];
-      AUTORELEASE(aCell);
-      
-      messagesColumn = [[NSTableColumn alloc] initWithIdentifier: @"Messages"];
-      [messagesColumn setEditable: NO];
-      // FIXME - This is pissing me off on Cocoa.
-      [messagesColumn setMaxWidth: 100];
-      [[messagesColumn headerCell] setStringValue: _(@"Messages")];
-      
-      outlineView = [[ExtendedOutlineView alloc] initWithFrame: NSZeroRect];
-      [outlineView addTableColumn: mailboxColumn];
-      [outlineView addTableColumn: messagesColumn];
-      [outlineView setOutlineTableColumn: mailboxColumn];
-      [outlineView setDrawsGrid: NO];
-      [outlineView setIndentationPerLevel: 10];
-      [outlineView setAutoresizesOutlineColumn: YES];
-      [outlineView setIndentationMarkerFollowsCell: YES];
-      [outlineView setAllowsColumnSelection: NO];
-      [outlineView setAllowsColumnReordering: NO];
-      [outlineView setAllowsEmptySelection: YES];
-      [outlineView setAllowsMultipleSelection: YES];
-      /* Available on 10.4 or later */
-      if ([outlineView respondsToSelector:@selector(setColumnAutoresizingStyle:)])
-        [outlineView setColumnAutoresizingStyle: NSTableViewUniformColumnAutoresizingStyle];
-    else
-        [outlineView setAutoresizesAllColumnsToFit: YES];
-    
-      [outlineView sizeLastColumnToFit];
-      [outlineView setDataSource: [MailboxManagerController singleInstance]];
-      [outlineView setDelegate: [MailboxManagerController singleInstance]];
-      [outlineView setTarget: [MailboxManagerController singleInstance]];
-      
-      // We register the outline view for dragged types
-      [outlineView registerForDraggedTypes: [NSArray arrayWithObject: MessagePboardType]];
-      
-      // We set our autosave name for our outline view
-      [outlineView setAutosaveName: @"MailboxManager"];
-      [outlineView setAutosaveTableColumns: YES];
-      
-      scrollView = [[NSScrollView alloc] initWithFrame: NSZeroRect];
-      [scrollView setDocumentView: outlineView];
-      [scrollView setHasHorizontalScroller: NO];
-      [scrollView setHasVerticalScroller: YES];
-      [scrollView setBorderType: NSBezelBorder];
-      [scrollView setAutoresizingMask: NSViewWidthSizable|NSViewHeightSizable];
-      
-      [[scrollView verticalScroller] setControlSize: ([[NSUserDefaults standardUserDefaults] integerForKey: @"SCROLLER_SIZE" default: NSOffState] == NSOffState ? NSRegularControlSize : NSSmallControlSize)];
-															       
-															       
-															       [drawer setContentView: scrollView];
-															       drawerSize = [drawer contentSize];
-															       drawerSize.width = 275;
-															       [drawer setContentSize: drawerSize];
-															       RELEASE(scrollView);
-															       RELEASE(mailboxColumn);
-															       RELEASE(messagesColumn);
-  
-  //
-  // We set up our various toolbar items
-  //
-  [icon setTarget: [NSApp delegate]];
-  [icon setAction: @selector(showConsoleWindow:)];
-
-  [mailboxes setTarget: [NSApp delegate]];
-  [mailboxes setAction: @selector(showMailboxManager:)];
-  
-  [addresses setTarget: [NSApp delegate]];
-  [addresses setAction: @selector(showAddressBook:)];
-  
-  [find setTarget: [NSApp delegate]];
-  [find setAction: @selector(showFindWindow:)];
-
-  [dataView setDoubleAction: @selector(doubleClickedOnDataView:)];
-    }
 
   // We set up our context menu
   menu = [[NSMenu alloc] init];
@@ -2166,17 +2058,6 @@
   // We add our window from our list of opened windows
   [GNUMail addMailWindow: [self window]];
 
-  if ([[NSUserDefaults standardUserDefaults] integerForKey: @"PreferredViewStyle"  default: GNUMailDrawerView] == GNUMailDrawerView)
-    {
-      // We show our MailboxManager window, if we need to.
-      // Under OS X, we MUST do this _after_ showing any MailWindow:s
-      // since we are using a drawer attached to the window.
-      if ([[NSUserDefaults standardUserDefaults] boolForKey: @"OPEN_MAILBOXMANAGER_ON_STARTUP"])
-	{
-	  [[NSApp delegate] showMailboxManager: nil];
-	}
-    }
-
   // We initialize some ivars
   allMessageViewWindowControllers = [[NSMutableArray alloc] init];
 }
@@ -2206,12 +2087,6 @@
 	}
     }
   
-  if ([[NSUserDefaults standardUserDefaults] integerForKey: @"PreferredViewStyle"  default: GNUMailDrawerView] == GNUMailDrawerView)
-    {
-      // We set the current outline view for our mailbox manager
-      [[MailboxManagerController singleInstance] setCurrentOutlineView: outlineView];
-    }
-
   // We finally select the "current" mailbox in the Mailboxes window / drawer
   if (_folder)
     {

@@ -65,6 +65,7 @@
   
   aBundle = [NSBundle bundleForClass: [parent class]];
 
+  /*
   cell = [[NSButtonCell alloc] init];
   AUTORELEASE(cell);
   [cell setButtonType: NSPushOnPushOffButton];
@@ -112,7 +113,7 @@
 		       label: _(@"(You need to restart GNUMail for this change to take effect)")
 		       alignment: NSCenterTextAlignment];
   [self addSubview: label];
-
+  */
 
 
   //

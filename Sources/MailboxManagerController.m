@@ -2651,8 +2651,7 @@ static MailboxManagerController *singleInstance = nil;
 
   [aStore connectInBackgroundAndNotify];
   
-  if ([[NSUserDefaults standardUserDefaults] integerForKey: @"PreferredViewStyle"  default: GNUMailDrawerView] == GNUMailFloatingView &&
-      [[self window] isVisible])
+  if ([[self window] isVisible])
     {
       [[self window] makeKeyAndOrderFront: self];
     }
