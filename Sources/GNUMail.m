@@ -2191,7 +2191,7 @@ static BOOL doneInit = NO;
   // under GNUstep and to ~/Library/GNUMail/Mailboxes under Mac OS X
   if (![[NSUserDefaults standardUserDefaults] objectForKey: @"LOCALMAILDIR"])
     {
-      pathToLocalMailDir = [NSHomeDirectory() stringByAppendingPathComponent: @"Mailboxes"];
+      pathToLocalMailDir = [GNUMailUserLibraryPath() stringByAppendingPathComponent: @"Mailboxes"];
       
       [[NSUserDefaults standardUserDefaults] setObject: pathToLocalMailDir  forKey: @"LOCALMAILDIR"];
       [[NSUserDefaults standardUserDefaults] setObject: pathToLocalMailDir  forKey: @"LOCALMAILDIR_PREVIOUS"];

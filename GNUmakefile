@@ -73,7 +73,6 @@ Mail_OBJC_FILES = \
 	Sources/ExtendedOutlineView.m \
 	Sources/ExtendedWindow.m \
 	Sources/EditWindowController.m \
-	Sources/EditWindowToolbar.m \
 	Sources/Filter.m \
 	Sources/FilterManager.m \
 	Sources/FindWindowController.m \
@@ -90,16 +89,12 @@ Mail_OBJC_FILES = \
 	Sources/MailboxManager.m \
 	Sources/MailboxManagerCache.m \
 	Sources/MailboxManagerController.m \
-	Sources/MailboxManagerToolbar.m \
 	Sources/MailHeaderCell.m \
 	Sources/MailWindowController.m \
-	Sources/MailWindowToolbar.m \
 	Sources/MessageViewWindow.m \
 	Sources/MessageViewWindowController.m \
-	Sources/MessageViewWindowToolbar.m \
 	Sources/MimeType.m \
 	Sources/MimeTypeManager.m \
-	Sources/NavigationToolbarItem.m \
 	Sources/NewMailboxPanelController.m \
 	Sources/NSAttributedString+Extensions.m \
 	Sources/NSAttributedString+TextEnriched.m \

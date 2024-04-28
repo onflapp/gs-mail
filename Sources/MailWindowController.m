@@ -108,7 +108,6 @@
 
 - (id) initWithWindowNibName: (NSString *) windowNibName
 {
-  NSToolbar *aToolbar;
   NSInteger scrollerSize;
 
   self = [super initWithWindowNibName: windowNibName];
@@ -116,35 +115,8 @@
   _allVisibleMessages = [[NSMutableArray alloc] init];
   _noResetSearchField = NO;
 
-  allowedToolbarItemIdentifiers = [[NSMutableArray alloc] initWithObjects: NSToolbarSeparatorItemIdentifier,
-							  NSToolbarSpaceItemIdentifier,
-							  NSToolbarFlexibleSpaceItemIdentifier,
-							  NSToolbarCustomizeToolbarItemIdentifier, 
-							  @"delete",
-							  @"retrieve",
-							  @"mailbox",
-							  @"compose",
-							  @"reply",
-							  @"forward",
-							  @"addresses",
-							  @"find",
-                                                          @"fastfind",
-							  @"navigation",
-							  nil];
-
-  additionalToolbarItems = [[NSMutableDictionary alloc] init];
-
-
   // We set our window title
   [[self window] setTitle: @""];
-
-  // We initialize our toolbar
-  aToolbar = [[NSToolbar alloc] initWithIdentifier: @"MailWindowToolbar"];
-  [aToolbar setDelegate: self];
-  [aToolbar setAllowsUserCustomization: YES];
-  [aToolbar setAutosavesConfiguration: YES];
-  //[[self window] setToolbar: aToolbar];
-  RELEASE(aToolbar);
 
   //
   // We create all table columns
@@ -272,7 +244,7 @@
 {
   NSDebugLog(@"MailWindowController: -dealloc");
 
-  [[self window] setDelegate: nil]; // FIXME not necessary in coca and in gnustep as of 2014-02-11, only for compatibility with old releases
+  //[[self window] setDelegate: nil]; // FIXME not necessary in coca and in gnustep as of 2014-02-11, only for compatibility with old releases
   [[NSNotificationCenter defaultCenter] 
     removeObserver: mailHeaderCell
     name: @"NSViewFrameDidChangeNotification" 
@@ -301,9 +273,6 @@
   RELEASE(fromColumn);
   RELEASE(subjectColumn);
   RELEASE(sizeColumn);
-
-  RELEASE(allowedToolbarItemIdentifiers);
-  RELEASE(additionalToolbarItems);
 
   RELEASE(searchField);
   
@@ -1749,6 +1718,10 @@
   NSString *theIdentifier;
   NSInteger i, count;
 
+  [dataView setDataSource: nil]; 
+  [dataView setDelegate: nil];
+  [dataView setTarget: nil];
+
   //
   // We save the table columns order and width.
   //
@@ -2876,6 +2849,7 @@
 	    }
 	  else
 	    {
+              /*
 	      NSToolbarItem *aToolbarItem;
 	      NSToolbar *aToolbar;
 
@@ -2895,6 +2869,7 @@
 	      aToolbar = [[self window] toolbar];
 	      [aToolbar insertItemWithItemIdentifier: [aBundle name]
 			atIndex: [[aToolbar visibleItems] count]];
+              */
 	    }
 	}
 

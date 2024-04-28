@@ -103,9 +103,6 @@
   BOOL showAllHeaders;
   BOOL showRawSource;
   
-  NSMutableArray *allowedToolbarItemIdentifiers;
-  NSMutableDictionary *additionalToolbarItems;
-
   //
   // Public ivars
   //
