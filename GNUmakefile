@@ -59,7 +59,6 @@ Mail_OBJC_FILES = \
 	Sources/GSProgressIndicator.m \
 	Sources/AboutPanelController.m \
 	Sources/AddressBookController.m \
-	Sources/AddressBookPanel.m \
 	Sources/ApplicationIconController.m \
 	Sources/AutoCompletingTextField.m \
 	Sources/ConsoleWindowController.m \

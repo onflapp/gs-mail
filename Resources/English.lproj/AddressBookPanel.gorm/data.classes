@@ -44,11 +44,4 @@
 	);
 	Super = NSObject;
     };
-    StripeTableView = {
-	Actions = (
-	);
-	Outlets = (
-	);
-	Super = NSTableView;
-    };
 }

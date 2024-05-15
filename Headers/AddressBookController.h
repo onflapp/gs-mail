@@ -50,14 +50,24 @@
 //
 //
 //
-@interface AddressBookController: NSWindowController
+@interface AddressBookController: NSObject
 {
   // Outlets and ivars
+  IBOutlet NSWindow *window;
+  IBOutlet NSBrowser *browser;
+  IBOutlet NSTableView *tableView;
+
   IBOutlet NSPopUpButton *preferredEmailLabelPopUp;
   ADSinglePropertyView *singlePropertyView;
 
+  NSMutableDictionary *allPersons;
+  NSMutableArray *allSortedKeys;
+
   NSMapTable *_table;
 }
+
+- (NSWindow*) window;
+- (void) showWindow:(id) sender;
 
 //
 // Action methods

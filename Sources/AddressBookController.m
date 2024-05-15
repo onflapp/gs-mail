@@ -27,7 +27,6 @@
 
 #import <AddressBook/AddressBook.h>
 
-#import "AddressBookPanel.h"
 #import "GNUMail.h"
 #import "Constants.h"
 #import "Utilities.h"
@@ -181,6 +180,11 @@ static AddressBookController *singleInstance = nil;
  return _(@"< unknown >");
 }
 
+- (BOOL) compare: (ABPerson *) thePerson
+{
+   return [[self fullName] compare: [thePerson fullName]];
+}
+
 @end
 
 
@@ -190,36 +194,33 @@ static AddressBookController *singleInstance = nil;
 //
 @implementation AddressBookController
 
-- (id) initWithWindowNibName: (NSString *) windowNibName
+- (id) init
 {
-    NSEnumerator *e;
-    ABPerson *person;
+  self = [super init];
+  [NSBundle loadNibNamed:@"AddressBookPanel" owner:self];
 
-  AddressBookPanel *thePanel;
-  
-  thePanel = [[AddressBookPanel alloc] initWithContentRect: NSMakeRect(200,200,520,325)
-				       styleMask: NSTitledWindowMask|NSClosableWindowMask|NSMiniaturizableWindowMask
-				       backing: NSBackingStoreBuffered
-				       defer: YES];
-  
-  self = [super initWithWindow: thePanel];
+  allPersons = [[NSMutableDictionary alloc] init];
+  allSortedKeys = [[NSMutableArray alloc] init];
 
-  [thePanel layoutPanel];
-  [thePanel setDelegate: self];
-  [thePanel setMinSize: [thePanel frame].size];
+  NSEnumerator *e;
+  ABPerson *person;
 
   // We link our outlets
-  singlePropertyView = thePanel->singlePropertyView;
-  preferredEmailLabelPopUp = thePanel->prefLabelPopup;
-  RELEASE(thePanel);
-
-  // We set some initial parameters
-  [[self window] setTitle: _(@"Address Book")];
+  //singlePropertyView = thePanel->singlePropertyView;
+  //preferredEmailLabelPopUp = thePanel->prefLabelPopup;
 
   // We finally set our autosave window frame name and restore the one from the user's defaults.
-  [[self window] setFrameAutosaveName: @"AddressBookPanel"];
-  [[self window] setFrameUsingName: @"AddressBookPanel"];
+  [window setFrameAutosaveName: @"AddressBookPanel"];
+  [window setFrameUsingName: @"AddressBookPanel"];
   
+  [browser setAllowsEmptySelection:NO];
+  [browser setAllowsMultipleSelection:NO];
+  [browser setAction: @selector(selectionInBrowserHasChanged:)];
+  //[tableView setDoubleAction: @selector(doubleClicked:)];
+
+  //[browser loadColumnZero];
+  //[browser selectRow: 0  inColumn: [browser firstVisibleColumn]];
+
   _table = NSCreateMapTable(NSObjectMapKeyCallBacks, NSObjectMapValueCallBacks, 64);
   
   // we initialize the available email label types
@@ -250,11 +251,24 @@ static AddressBookController *singleInstance = nil;
 //
 - (void) dealloc
 {
+  [tableView setDataSource: nil];
+  RELEASE(allPersons);
+  RELEASE(allSortedKeys);
+
   NSFreeMapTable(_table);
 
   [super dealloc];
 }
 
+- (NSWindow*) window
+{
+  return window;
+}
+
+- (void) showWindow:(id) sender
+{
+  [window makeKeyAndOrderFront: sender];
+}
 
 //
 //
@@ -397,7 +411,7 @@ static AddressBookController *singleInstance = nil;
 {
   int modifier;
 
-  modifier = [[[self window] currentEvent] modifierFlags];
+  modifier = [[window currentEvent] modifierFlags];
 
   if ( (modifier&NSControlKeyMask) && !(modifier&NSShiftKeyMask) )
     {
@@ -577,7 +591,168 @@ static AddressBookController *singleInstance = nil;
 {
   return [self addressesWithSubstring: theSubstring inGroupWithId: nil];
 }
+
+//
+//
+//
+- (IBAction) doubleClicked: (id) sender
+{
+  if ( sender == browser )
+    {
+      [tableView selectAll: self];
+    }
+  else
+    {
+      [self doubleClickOnName: nil  value: nil  inView: nil];
+    }
+}
+
+//
+//
+//
+- (IBAction) selectionInBrowserHasChanged: (id) sender
+{
+  NSInteger col = [browser firstVisibleColumn];
+  NSInteger selRow = [browser selectedRowInColumn: col];
+  //[tableView deselectAll: self];
   
+  if (selRow < 0)
+    return;
+
+  [self browser: browser selectRow: selRow inColumn: col];
+}
+
+//
+//
+//
+- (NSInteger) browser: (NSBrowser *) sender
+ numberOfRowsInColumn: (NSInteger) column
+{
+  // We return the number of groups we have  
+  return ([[[ABAddressBook sharedAddressBook] groups] count] + 1);
+}
+
+
+//
+//
+//
+- (void) browser: (NSBrowser *) sender
+ willDisplayCell: (id) cell
+	   atRow: (NSInteger) row
+	  column: (NSInteger) column
+{
+  // We display the group name
+  if (row == 0)
+    {
+      [cell setStringValue: _(@"All")];
+    }
+  else
+    {
+      [cell setStringValue: [[[[ABAddressBook sharedAddressBook] groups] objectAtIndex: (row-1)]
+            valueForProperty: kABGroupNameProperty]];
+    }
+  [cell setLeaf: YES];
+}
+
+- (BOOL) browser: (NSBrowser *) sender
+       selectRow: (NSInteger) row
+        inColumn: (NSInteger) column
+{
+  NSArray *allObjects, *allKeys;
+  ABAddressBook *addressBook;
+  ABPerson *aPerson;
+  NSUInteger i, j;
+  
+  addressBook = [ABAddressBook sharedAddressBook];
+  [allPersons removeAllObjects];
+  [allSortedKeys removeAllObjects];
+   
+  if ( row == 0 )
+    {
+      allObjects = [addressBook people];
+    }
+  else
+    {
+      allObjects = [[[addressBook groups] objectAtIndex: (row-1)] members];
+    }
+    
+  for (i = 0; i < [allObjects count]; i++)
+    {
+      aPerson = [allObjects objectAtIndex: i];
+      
+      for (j = 0; j < [[aPerson valueForProperty: kABEmailProperty] count]; j++)
+        {
+          if ([preferredEmailLabelPopUp indexOfSelectedItem] == 0) // Any
+            {
+              [allPersons setObject: aPerson
+                             forKey: [(ABMultiValue *)[aPerson valueForProperty: kABEmailProperty] valueAtIndex: j]];
+            }
+          else
+            {
+              NSString *labelFilter = [[preferredEmailLabelPopUp selectedItem] representedObject];
+              NSString *email = [(ABMultiValue *)[aPerson valueForProperty: kABEmailProperty] valueAtIndex: j];
+              NSString *label = [(ABMultiValue *)[aPerson valueForProperty: kABEmailProperty] labelAtIndex: j];
+              if ([label isEqualToString:labelFilter] == YES)
+                  [allPersons setObject: aPerson forKey:email];
+            }
+        }
+    }
+
+  allObjects = [[allPersons allValues] sortedArrayUsingSelector: @selector(compare:)];
+  
+  for (i = 0; i < [allObjects count]; i++)
+    {
+      allKeys = [allPersons allKeysForObject: [allObjects objectAtIndex: i]];
+      
+      for (j = 0; j < [allKeys count]; j++)
+        {
+           if ( ![allSortedKeys containsObject: [allKeys objectAtIndex: j]] )
+             {
+               [allSortedKeys addObject: [allKeys objectAtIndex: j]];
+             }
+        }
+    }
+
+  [tableView reloadData];  
+  return YES;
+}
+
+- (NSInteger) numberOfRowsInTableView: (NSTableView *) theTableView
+{
+  return [allSortedKeys count];
+}
+
+- (id)           tableView: (NSTableView *) aTableView
+ objectValueForTableColumn: (NSTableColumn *) aTableColumn 
+		       row: (NSInteger) rowIndex
+{
+  ABPerson *aPerson;
+  
+  aPerson = [allPersons objectForKey: [allSortedKeys objectAtIndex: rowIndex]];
+  
+  // Email column
+  if ( aTableColumn == [[aTableView tableColumns] lastObject] )
+    {
+      return [allSortedKeys objectAtIndex: rowIndex];
+    }
+  // Person name
+  else
+    {
+      return [aPerson fullName];
+    }
+    
+  // Never reached.
+  return nil;
+}
+
+- (BOOL)    tableView: (NSTableView *) theTableView
+shouldEditTableColumn: (NSTableColumn *) theTableColumn
+                  row: (NSInteger) theRow
+{
+  // We prevent any kind of editing in the table view
+  return NO;
+}
+
 //
 // class methods
 //
@@ -585,7 +760,7 @@ static AddressBookController *singleInstance = nil;
 {
   if (!singleInstance)
     {
-      singleInstance = [[AddressBookController alloc] initWithWindowNibName: @"AddressBookPanel"];
+      singleInstance = [[AddressBookController alloc] init];
     }
   
   return singleInstance;
