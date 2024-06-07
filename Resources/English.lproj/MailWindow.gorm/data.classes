@@ -102,6 +102,13 @@
 	);
 	Super = NSProgressIndicator;
     };
+    ImageButton = {
+	Actions = (
+	);
+	Outlets = (
+	);
+	Super = NSButton;
+    };
     MailWindowController = {
 	Actions = (
 	    "pageUpMessage:",

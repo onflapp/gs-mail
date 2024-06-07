@@ -2024,7 +2024,6 @@ static NSMutableDictionary *passwordCache = nil;
 	      
 	      theURLName = [[CWURLName alloc] initWithString: [foldersToOpen objectAtIndex: i]
 					      path: [[NSUserDefaults standardUserDefaults] objectForKey: @"LOCALMAILDIR"]];
-	      
 	      if (([theStore isKindOfClass: [CWLocalStore class]] &&
 		   [[theURLName protocol] caseInsensitiveCompare: @"LOCAL"] == NSOrderedSame) ||
 		  ([theStore isKindOfClass: [CWIMAPStore class]] &&

@@ -424,7 +424,6 @@ static MailboxManagerController *singleInstance = nil;
       NSInteger level;
       
       level = [aOutlineView levelForItem: item];
-      
       if (level > 0)
 	{
 	  NSString *aString;
@@ -1814,7 +1813,6 @@ static MailboxManagerController *singleInstance = nil;
 - (void) reloadAllFolders
 {
   DESTROY(localNodes);
-
   // We remove all our elements
   [_allFolders removeAllObjects];
 
@@ -1896,16 +1894,11 @@ static MailboxManagerController *singleInstance = nil;
   // We inform our outline view to reload its data.
   [outlineView reloadData];
 
-  // We always expand our root item
-  [outlineView expandItem: _allFolders];
-  
-  // We now select and expand the 'Local' folder if there's no IMAP folders defined
-  if ([_allFolders count] == 1 && [_allFolders lastObject] == localNodes)
+  // We always expand our root items
+  for (id item in _allFolders) 
     {
-      [outlineView expandItem: localNodes];
-      [outlineView selectRow: [outlineView rowForItem: localNodes]
-  		   byExtendingSelection: NO];
-   }
+      [outlineView expandItem: item];
+    }
 }
 
 

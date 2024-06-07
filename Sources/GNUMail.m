@@ -2436,7 +2436,7 @@ static BOOL doneInit = NO;
     }  
 
   [Utilities restoreOpenFoldersForStore: aLocalStore];
-  [self _connectToIMAPServers];
+  //[self _connectToIMAPServers];
     
   // If we must show the Preferences window, we show it right now. That happens if for example,
   // we started GNUMail for the first time and the user has chosen to configure it.

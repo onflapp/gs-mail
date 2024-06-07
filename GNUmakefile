@@ -82,6 +82,7 @@ Mail_OBJC_FILES = \
 	Sources/GNUMail+MenuValidation.m \
 	Sources/GNUMail+Services.m \
 	Sources/ImageTextCell.m \
+	Sources/ImageButton.m \
 	Sources/LabelWidget.m \
 	Sources/MailboxInspectorPanel.m \
 	Sources/MailboxInspectorPanelController.m \
