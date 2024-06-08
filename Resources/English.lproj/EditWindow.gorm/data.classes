@@ -62,4 +62,11 @@
 	);
 	Super = NSObject;
     };
+    ImageButton = {
+	Actions = (
+	);
+	Outlets = (
+	);
+	Super = NSButton;
+    };
 }

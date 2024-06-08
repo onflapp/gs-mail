@@ -1516,7 +1516,7 @@ static NSMutableDictionary *passwordCache = nil;
       // We create a replied copy of our message and we retain it
       aMessage = [theMessage reply: theMode];
       RETAIN(aMessage);
-      
+
       // If we are in the Sent folder, we replace the recipient with the original recipients
       // of the messages.
       if ([Utilities stringValueOfURLName: [Utilities stringValueOfURLNameFromFolder: theFolder]  
